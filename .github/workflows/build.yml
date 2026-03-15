@@ -1,0 +1,112 @@
+name: Build
+
+on:
+  schedule:
+    # Nightly build at 2 AM UTC
+    - cron: '0 2 * * *'
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  build-linux:
+    name: Build on Linux
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler:
+          - { cxx: clang-21, cc: clang-21 }
+          - { cxx: g++-15, cc: gcc-15 }
+        config:
+          - { name: Release, type: Release }
+          - { name: Debug, type: Debug }
+          - { name: Debug-Asan, type: Debug, sanitizer: address }
+          - { name: Debug-Tsan, type: Debug, sanitizer: thread }
+          - { name: Debug-Ubsan, type: Debug, sanitizer: undefined }
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies (clang-21)
+        if: matrix.compiler.cc == 'clang-21'
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 21
+          rm llvm.sh
+
+      - name: Install dependencies (gcc-15)
+        if: matrix.compiler.cc == 'gcc-15'
+        run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install -y g++-15 gcc-15
+
+      - name: Create build directory
+        run: mkdir -p build-${{ matrix.config.name }}
+
+      - name: Configure CMake
+        working-directory: build-${{ matrix.config.name }}
+        env:
+          CC: ${{ matrix.compiler.cc }}
+          CXX: ${{ matrix.compiler.cxx }}
+          SANITIZER: ${{ matrix.config.sanitizer }}
+        run: |
+          CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=${{ matrix.config.type }} -DTST_ENABLE_TESTS=ON"
+          if [ -n "$SANITIZER" ]; then
+            CMAKE_FLAGS="$CMAKE_FLAGS -DCMAKE_CXX_FLAGS=-fsanitize=$SANITIZER -DCMAKE_EXE_LINKER_FLAGS=-fsanitize=$SANITIZER"
+          fi
+          cmake .. $CMAKE_FLAGS
+
+      - name: Build
+        working-directory: build-${{ matrix.config.name }}
+        run: cmake --build . --parallel
+
+      - name: Run tests
+        working-directory: build-${{ matrix.config.name }}
+        run: ctest --output-on-failure
+
+  build-windows:
+    name: Build on Windows
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { name: Release, type: Release }
+          - { name: Debug, type: Debug }
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install CMake 4.2+
+        run: choco install cmake -y
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Create build directory
+        run: mkdir -p build-${{ matrix.config.name }}
+
+      - name: Configure CMake
+        working-directory: build-${{ matrix.config.name }}
+        run: cmake .. -G "Visual Studio 18 2026" -A x64 -DCMAKE_BUILD_TYPE=${{ matrix.config.type }} -DTST_ENABLE_TESTS=ON
+
+      - name: Build
+        working-directory: build-${{ matrix.config.name }}
+        run: cmake --build . --config ${{ matrix.config.type }} --parallel
+
+      - name: Run tests
+        working-directory: build-${{ matrix.config.name }}
+        run: ctest --output-on-failure -C ${{ matrix.config.type }}
