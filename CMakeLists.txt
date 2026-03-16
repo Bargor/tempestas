@@ -1,4 +1,9 @@
-cmake_minimum_required(VERSION 3.20)
+# Check for CMake 4.2+ when using Visual Studio 2026
+if(CMAKE_GENERATOR MATCHES "Visual Studio 18 2026")
+    cmake_minimum_required(VERSION 4.2)
+else()
+    cmake_minimum_required(VERSION 3.30)
+endif()
 
 project(tempestas VERSION 1.0.0 LANGUAGES CXX)
 
