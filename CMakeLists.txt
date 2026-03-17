@@ -20,11 +20,21 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # Project options
 option(TST_ENABLE_TESTS "Enable building tests" ON)
 
+# Add third-party libraries
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+add_subdirectory(third_party/glfw)
+
+set(FMT_TEST OFF CACHE BOOL "" FORCE)
+set(FMT_DOC OFF CACHE BOOL "" FORCE)
+add_subdirectory(third_party/fmt)
+
 # Main project configuration
 set(PROJECT_SOURCES)
 
 # Include subdirectories
-# add_subdirectory(src)
+add_subdirectory(src)
 
 if(TST_ENABLE_TESTS)
     enable_testing()
