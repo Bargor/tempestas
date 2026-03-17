@@ -13,7 +13,7 @@ void shutdown_glfw() {
     glfwTerminate();
 }
 
-int main(int argc, char* argv[]) {
+int main([[maybe_unused]]  int argc, [[maybe_unused]] char* argv[]) {
     if (!initialize_glfw()) {
         return EXIT_FAILURE;
     }
