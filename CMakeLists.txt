@@ -30,9 +30,6 @@ set(FMT_TEST OFF CACHE BOOL "" FORCE)
 set(FMT_DOC OFF CACHE BOOL "" FORCE)
 add_subdirectory(third_party/fmt)
 
-# Main project configuration
-set(PROJECT_SOURCES)
-
 # Include subdirectories
 add_subdirectory(src)
 
