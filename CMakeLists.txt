@@ -7,6 +7,16 @@ endif()
 
 project(tempestas VERSION 1.0.0 LANGUAGES CXX)
 
+# The project version number.
+set(VERSION_MAJOR   0   CACHE STRING "Project major version number.")
+set(VERSION_MINOR   0   CACHE STRING "Project minor version number.")
+set(VERSION_PATCH   1   CACHE STRING "Project patch version number.")
+
+#Get build number
+execute_process(COMMAND git -C ${CMAKE_SOURCE_DIR} rev-parse --short HEAD OUTPUT_VARIABLE VERSION_REVISION)
+
+message(${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}:${VERSION_REVISION})
+
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -29,6 +39,10 @@ add_subdirectory(third_party/glfw)
 set(FMT_TEST OFF CACHE BOOL "" FORCE)
 set(FMT_DOC OFF CACHE BOOL "" FORCE)
 add_subdirectory(third_party/fmt)
+
+find_package(Vulkan REQUIRED)
+
+include(${PROJECT_SOURCE_DIR}/cmake/TstAddLibrary.cmake)
 
 # Include subdirectories
 add_subdirectory(src)
