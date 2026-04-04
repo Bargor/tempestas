@@ -1,7 +1,13 @@
-add_executable(tempestas
+set(GAME_SOURCES 
     main.cpp
 )
 
-target_include_directories(tempestas PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+tst_add_executable(tempestas 
+    ""
+    "${GAME_SOURCES}"
+)
 
-target_link_libraries(tempestas PRIVATE glfw fmt::fmt project_warnings)
+target_include_directories(tempestas PRIVATE ${CMAKE_SOURCE_DIR}/third_party/glfw/include)
+target_include_directories(tempestas PRIVATE ${Vulkan_INCLUDE_DIRS})
+
+target_link_libraries(tempestas PRIVATE glfw fmt::fmt tst::rendering)
