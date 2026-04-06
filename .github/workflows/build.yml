@@ -110,21 +110,24 @@ jobs:
       - name: Install CMake 4.2+
         run: choco install cmake -y
 
-      - name: Download Vulkan SDK (zip)
+      - name: Download Vulkan SDK
         shell: bash
         run: |
-          curl -L -o vulkan.zip https://sdk.lunarg.com/sdk/download/1.4.335.0/windows/VulkanRT-X64-1.4.335.0-Components.zip
-
-      - name: Extract Vulkan SDK
-        shell: powershell
-        run: |
-          Expand-Archive vulkan.zip -DestinationPath C:\VulkanSDK
+          curl -L -o vulkan.exe https://sdk.lunarg.com/sdk/download/1.4.335.0/windows/vulkansdk-windows-X64-1.4.335.0.exe
+          cmd /c "vulkan.exe /S"
 
       - name: Set Vulkan SDK env
         shell: powershell
         run: |
           echo "VULKAN_SDK=C:\VulkanSDK\1.4.335.0" >> $env:GITHUB_ENV
           echo "PATH=C:\VulkanSDK\1.4.335.0\Bin;$env:PATH" >> $env:GITHUB_ENV
+
+      - name: Debug Vulkan paths
+        shell: powershell
+        run: |
+          echo "VULKAN_SDK=$env:VULKAN_SDK"
+          dir C:\VulkanSDK
+          dir $env:VULKAN_SDK
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
