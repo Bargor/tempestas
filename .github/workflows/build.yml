@@ -107,27 +107,27 @@ jobs:
       - name: Setup MSVC
         uses: ilammy/msvc-dev-cmd@v1
 
+      - name: Install Vulkan SDK
+        run: choco install vulkan-sdk --no-progress -y
+
+      - name: Check Vulkan SDK version (choco)
+        run: choco list --installed vulkan-sdk
+
+      - name: Detect Vulkan SDK version
+        shell: powershell
+        run: |
+          $sdk = Get-ChildItem "C:\VulkanSDK" | Sort-Object Name -Descending | Select-Object -First 1
+          Write-Host "Detected Vulkan SDK version: $($sdk.Name)"
+          echo "VULKAN_SDK=C:\VulkanSDK\$($sdk.Name)" >> $env:GITHUB_ENV
+
+      - name: Verify Vulkan SDK
+        shell: powershell
+        run: |
+          dir "$env:VULKAN_SDK\Include\vulkan\vulkan.h"
+          dir "$env:VULKAN_SDK\Lib\vulkan-1.lib"
+
       - name: Install CMake 4.2+
         run: choco install cmake -y
-
-      - name: Download Vulkan SDK
-        shell: bash
-        run: |
-          curl -L -o vulkan.exe https://sdk.lunarg.com/sdk/download/1.4.335.0/windows/vulkansdk-windows-X64-1.4.335.0.exe
-          cmd /c "vulkan.exe /S"
-
-      - name: Set Vulkan SDK env
-        shell: powershell
-        run: |
-          echo "VULKAN_SDK=C:\VulkanSDK\1.4.335.0" >> $env:GITHUB_ENV
-          echo "PATH=C:\VulkanSDK\1.4.335.0\Bin;$env:PATH" >> $env:GITHUB_ENV
-
-      - name: Debug Vulkan paths
-        shell: powershell
-        run: |
-          echo "VULKAN_SDK=$env:VULKAN_SDK"
-          dir C:\VulkanSDK
-          dir $env:VULKAN_SDK
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
