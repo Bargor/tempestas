@@ -48,10 +48,22 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y g++-15 gcc-15
 
-      - name: Install Wayland dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y wayland-protocols libwayland-dev libxkbcommon-dev libx11-dev xorg-dev
+
+      - name: Download Vulkan SDK 1.4.335.0
+        run: |
+          wget https://sdk.lunarg.com/sdk/download/1.4.335.0/linux/vulkansdk-linux-x86_64-1.4.335.0.tar.xz
+          tar -xf vulkansdk-linux-x86_64-1.4.335.0.tar.xz
+
+      - name: Set Vulkan SDK env
+        run: |
+          echo "VULKAN_SDK=$PWD/1.4.335.0/x86_64" >> $GITHUB_ENV
+          echo "PATH=$PWD/1.4.335.0/x86_64/bin:$PATH" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=$PWD/1.4.335.0/x86_64/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+          echo "VK_LAYER_PATH=$PWD/1.4.335.0/x86_64/etc/vulkan/explicit_layer.d" >> $GITHUB_ENV
 
       - name: Create build directory
         run: mkdir -p build-${{ matrix.config.name }}
@@ -94,6 +106,25 @@ jobs:
 
       - name: Setup MSVC
         uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install Vulkan SDK
+        run: choco install vulkan-sdk --no-progress -y
+
+      - name: Check Vulkan SDK version (choco)
+        run: choco list --installed vulkan-sdk
+
+      - name: Detect Vulkan SDK version
+        shell: powershell
+        run: |
+          $sdk = Get-ChildItem "C:\VulkanSDK" | Sort-Object Name -Descending | Select-Object -First 1
+          Write-Host "Detected Vulkan SDK version: $($sdk.Name)"
+          echo "VULKAN_SDK=C:\VulkanSDK\$($sdk.Name)" >> $env:GITHUB_ENV
+
+      - name: Verify Vulkan SDK
+        shell: powershell
+        run: |
+          dir "$env:VULKAN_SDK\Include\vulkan\vulkan.h"
+          dir "$env:VULKAN_SDK\Lib\vulkan-1.lib"
 
       - name: Install CMake 4.2+
         run: choco install cmake -y
