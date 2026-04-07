@@ -3,7 +3,6 @@
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
 #include "instance.h"
-
 #include "utils.h"
 
 #include <GLFW/glfw3.h>
@@ -118,7 +117,6 @@ namespace {
     }
 
     vk::UniqueInstance create_instance() {
-
         VULKAN_HPP_DEFAULT_DISPATCHER.init(::vkGetInstanceProcAddr);
 
         vk::ApplicationInfo app_info("Tempestas",              // pApplicationName

@@ -20,7 +20,7 @@ public:
 private:
     instance();
     ~instance() = default;
-    
+
     instance(const instance&) = delete;
     instance& operator=(const instance&) = delete;
 

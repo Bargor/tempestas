@@ -12,6 +12,41 @@ on:
       - master
 
 jobs:
+  format-check:
+    name: Format Check
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format-20
+
+      - name: Check clang-format version
+        run: clang-format-20 --version
+
+      - name: Verify formatting
+        run: |
+          mapfile -t files < <(find src tests -type f \( -name '*.cpp' -o -name '*.h' -o -name '*.hpp' -o -name '*.c' -o -name '*.cc' -o -name '*.cxx' \) | sort)
+
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No source files found for formatting check."
+            exit 0
+          fi
+
+          clang-format-20 -i "${files[@]}"
+
+          if ! git diff --quiet -- "${files[@]}"; then
+            echo "Formatting issues detected. Please run clang-format on the files below:"
+            git diff --stat -- "${files[@]}"
+            git diff -- "${files[@]}"
+            exit 1
+          fi
+
   build-linux:
     name: Build on Linux
     runs-on: ubuntu-24.04
