@@ -26,7 +26,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
 
     fmt::printf("GLFW initialized successfully\n");
 
-    [[maybe_unused]] const auto& vulkanInstance = tst::rendering::instance::get_instance();
+    [[maybe_unused]] const auto& vulkan_instance = tst::rendering::instance::get_instance();
     fmt::printf("Vulkan instance created successfully\n");
 
     tst::shutdown_glfw();
