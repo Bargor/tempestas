@@ -2,12 +2,12 @@
 
 namespace tst::rendering {
 template<typename T>
-class VkExpected {
+class vk_expected {
 public:
-    VkExpected(vk::Result result, T&& value) : m_result(result), m_value(std::move(value)) {
+    vk_expected(vk::Result result, T&& value) : m_result(result), m_value(std::move(value)) {
     }
 
-    VkExpected(vk::Result result) : m_result(result) {
+    vk_expected(vk::Result result) : m_result(result) {
     }
 
     explicit operator bool() const {
@@ -32,11 +32,11 @@ private:
 };
 
 template<typename T>
-VkExpected<T> vkTry(vk::ResultValue<T>&& rv) {
+vk_expected<T> vk_try(vk::ResultValue<T>&& rv) {
     if (rv.result == vk::Result::eSuccess) [[likely]] {
-        return VkExpected<T>(rv.result, std::move(rv.value));
+        return vk_expected<T>(rv.result, std::move(rv.value));
     }
-    return VkExpected<T>(rv.result);
+    return vk_expected<T>(rv.result);
 }
 
 } // namespace tst::rendering

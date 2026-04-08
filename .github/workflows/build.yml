@@ -12,6 +12,41 @@ on:
       - master
 
 jobs:
+  format-check:
+    name: Format Check
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format-20
+
+      - name: Check clang-format version
+        run: clang-format-20 --version
+
+      - name: Verify formatting
+        run: |
+          mapfile -t files < <(find src tests -type f \( -name '*.cpp' -o -name '*.h' -o -name '*.hpp' -o -name '*.c' -o -name '*.cc' -o -name '*.cxx' \) | sort)
+
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No source files found for formatting check."
+            exit 0
+          fi
+
+          clang-format-20 -i "${files[@]}"
+
+          if ! git diff --quiet -- "${files[@]}"; then
+            echo "Formatting issues detected. Please run clang-format on the files below:"
+            git diff --stat -- "${files[@]}"
+            git diff -- "${files[@]}"
+            exit 1
+          fi
+
   build-linux:
     name: Build on Linux
     runs-on: ubuntu-24.04
@@ -51,7 +86,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y wayland-protocols libwayland-dev libxkbcommon-dev libx11-dev xorg-dev
+          sudo apt-get install -y wayland-protocols libwayland-dev libxkbcommon-dev libx11-dev xorg-dev mesa-vulkan-drivers vulkan-tools
 
       - name: Download Vulkan SDK 1.4.335.0
         run: |
@@ -64,6 +99,17 @@ jobs:
           echo "PATH=$PWD/1.4.335.0/x86_64/bin:$PATH" >> $GITHUB_ENV
           echo "LD_LIBRARY_PATH=$PWD/1.4.335.0/x86_64/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
           echo "VK_LAYER_PATH=$PWD/1.4.335.0/x86_64/etc/vulkan/explicit_layer.d" >> $GITHUB_ENV
+
+      - name: Detect Lavapipe ICD on Linux
+        run: |
+          lavapipe_icd="$(find /usr/share/vulkan /etc/vulkan -type f \( -name 'lvp_icd*.json' -o -name '*lavapipe*.json' \) 2>/dev/null | sort | head -n 1)"
+          if [ -z "$lavapipe_icd" ]; then
+            echo "Lavapipe ICD not found. Available Vulkan ICD manifests:"
+            find /usr/share/vulkan /etc/vulkan -type f -name '*.json' 2>/dev/null | sort
+            exit 1
+          fi
+          echo "Detected Lavapipe ICD: $lavapipe_icd"
+          echo "LAVAPIPE_ICD=$lavapipe_icd" >> $GITHUB_ENV
 
       - name: Create build directory
         run: mkdir -p build-${{ matrix.config.name }}
@@ -87,7 +133,19 @@ jobs:
 
       - name: Run tests
         working-directory: build-${{ matrix.config.name }}
-        run: ctest --output-on-failure
+        run: ctest --output-on-failure -E '^rendering[.]lavapipe$'
+
+      - name: Verify Lavapipe ICD on Linux
+        run: |
+          test -f "$LAVAPIPE_ICD"
+          VK_ICD_FILENAMES="$LAVAPIPE_ICD" vulkaninfo --summary | tee lavapipe-vulkaninfo.txt
+          grep -i "llvmpipe" lavapipe-vulkaninfo.txt
+
+      - name: Run lavapipe_test
+        working-directory: build-${{ matrix.config.name }}
+        env:
+          VK_ICD_FILENAMES: ${{ env.LAVAPIPE_ICD }}
+        run: ctest --output-on-failure -R '^rendering[.]lavapipe$'
 
   build-windows:
     name: Build on Windows
@@ -107,24 +165,14 @@ jobs:
       - name: Setup MSVC
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Install Vulkan SDK
-        run: choco install vulkan-sdk --no-progress -y
-
-      - name: Check Vulkan SDK version (choco)
-        run: choco list --installed vulkan-sdk
-
-      - name: Detect Vulkan SDK version
-        shell: powershell
-        run: |
-          $sdk = Get-ChildItem "C:\VulkanSDK" | Sort-Object Name -Descending | Select-Object -First 1
-          Write-Host "Detected Vulkan SDK version: $($sdk.Name)"
-          echo "VULKAN_SDK=C:\VulkanSDK\$($sdk.Name)" >> $env:GITHUB_ENV
-
-      - name: Verify Vulkan SDK
-        shell: powershell
-        run: |
-          dir "$env:VULKAN_SDK\Include\vulkan\vulkan.h"
-          dir "$env:VULKAN_SDK\Lib\vulkan-1.lib"
+      - name: Install Vulkan SDK and Lavapipe
+        uses: jakoch/install-vulkan-sdk-action@v1
+        with:
+          vulkan_version: 1.4.335.0
+          install_runtime: true
+          install_lavapipe: true
+          cache: true
+          stripdown: true
 
       - name: Install CMake 4.2+
         run: choco install cmake -y
@@ -145,4 +193,33 @@ jobs:
 
       - name: Run tests
         working-directory: build-${{ matrix.config.name }}
-        run: ctest --output-on-failure -C ${{ matrix.config.type }}
+        run: ctest --output-on-failure -C ${{ matrix.config.type }} -E '^rendering[.]lavapipe$'
+
+      - name: Verify Lavapipe ICD on Windows
+        shell: powershell
+        env:
+          VK_ICD_FILENAMES: C:\Lavapipe\share\vulkan\icd.d\lvp_icd.x86_64.json
+        run: |
+          if (-not (Test-Path $env:VK_ICD_FILENAMES)) {
+            throw "Lavapipe ICD manifest not found: $env:VK_ICD_FILENAMES"
+          }
+
+          $vulkanInfoCandidates = @(
+            (Join-Path $env:VULKAN_SDK 'Bin\vulkaninfoSDK.exe'),
+            (Join-Path $env:VULKAN_SDK 'Bin\vulkaninfo.exe')
+          )
+          $vulkanInfo = $vulkanInfoCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $vulkanInfo) {
+            throw "Vulkan info tool not found under $env:VULKAN_SDK\\Bin"
+          }
+
+          & $vulkanInfo --summary | Tee-Object -FilePath lavapipe-vulkaninfo.txt
+          if (-not (Select-String -Path lavapipe-vulkaninfo.txt -Pattern 'llvmpipe')) {
+            throw "Lavapipe was not reported by vulkaninfo"
+          }
+
+      - name: Run lavapipe_test
+        working-directory: build-${{ matrix.config.name }}
+        env:
+          VK_ICD_FILENAMES: C:\Lavapipe\share\vulkan\icd.d\lvp_icd.x86_64.json
+        run: ctest --output-on-failure -C ${{ matrix.config.type }} -R '^rendering[.]lavapipe$'

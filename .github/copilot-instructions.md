@@ -1,4 +1,5 @@
 # Copilot Instructions
 
 ## Project Guidelines
-- User prefers snake_case for naming conventions (function names, variables, etc.)
+- Use `snake_case` as the default naming convention for project-owned code.
+- Apply `snake_case` to functions, methods, variables, parameters, and new types unless an external API or framework requires a different form.

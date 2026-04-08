@@ -13,12 +13,14 @@ public:
     static const instance& get_instance() noexcept;
 
 public:
-    const vk::UniqueInstance& get_instance_handle() const noexcept;
+    const vk::UniqueInstance& get_instance_handle() const noexcept {
+        return m_instance;
+    }
 
 private:
     instance();
     ~instance() = default;
-    
+
     instance(const instance&) = delete;
     instance& operator=(const instance&) = delete;
 
