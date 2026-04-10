@@ -6,6 +6,7 @@ VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 #include "utils.h"
 
 #include <GLFW/glfw3.h>
+#include <core/platform.h>
 #include <cstring>
 #include <fmt/printf.h>
 
@@ -20,7 +21,7 @@ constexpr bool enable_validation_layers = true;
 namespace {
 #ifndef NDEBUG
 
-    inline std::string severity_to_string(vk::DebugUtilsMessageSeverityFlagBitsEXT severity) {
+    TST_INLINE std::string severity_to_string(vk::DebugUtilsMessageSeverityFlagBitsEXT severity) {
         switch (severity) {
         case vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose:
             return "VERBOSE";
@@ -35,7 +36,7 @@ namespace {
         }
     }
 
-    inline std::string type_to_string(vk::DebugUtilsMessageTypeFlagsEXT type) {
+    TST_INLINE std::string type_to_string(vk::DebugUtilsMessageTypeFlagsEXT type) {
         std::string result;
 
         if (type & vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral) result += "GENERAL|";
