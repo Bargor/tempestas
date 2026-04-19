@@ -1,6 +1,6 @@
 #pragma once
 
-#include "platform.h"
+#include <core/platform.h>
 
 #include <cstddef>
 
