@@ -1,7 +1,6 @@
 #pragma once
 
 #include <core/platform.h>
-
 #include <cstddef>
 
 namespace tst {

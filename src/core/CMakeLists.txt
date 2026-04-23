@@ -4,6 +4,7 @@ add_library(tst::core ALIAS core)
 
 target_include_directories(core
     INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
