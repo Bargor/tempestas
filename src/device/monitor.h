@@ -3,8 +3,10 @@
 #include <GLFW/glfw3.h>
 #include <core/position.h>
 #include <core/rectangle.h>
+#include <cstdint>
 #include <optional>
 #include <string>
+#include <vector>
 
 namespace tst::device {
 
@@ -17,6 +19,12 @@ public:
         int32_t green_bits{};
         int32_t blue_bits{};
         int32_t refresh_rate{};
+    };
+
+    struct gamma_ramp {
+        std::vector<uint16_t> red;
+        std::vector<uint16_t> green;
+        std::vector<uint16_t> blue;
     };
 
 public:
@@ -56,6 +64,10 @@ public:
         return m_video_mode;
     }
 
+    const gamma_ramp& get_gamma_ramp() const noexcept {
+        return m_gamma_ramp;
+    }
+
 private:
     GLFWmonitor* m_monitor{};
     std::string m_name;
@@ -65,6 +77,7 @@ private:
     core::rectangle<int32_t, int32_t> m_work_area{};
     core::position<float> m_content_scale{};
     std::optional<video_mode> m_video_mode{};
+    gamma_ramp m_gamma_ramp{};
 };
 
 } // namespace tst::device

@@ -28,6 +28,7 @@ void monitor::refresh() noexcept {
         m_work_area = {};
         m_content_scale = {};
         m_video_mode.reset();
+        m_gamma_ramp = {};
         return;
     }
 
@@ -50,6 +51,17 @@ void monitor::refresh() noexcept {
         m_video_mode = to_video_mode(*current_video_mode);
     } else {
         m_video_mode.reset();
+    }
+
+    const GLFWgammaramp* glfw_gamma_ramp = glfwGetGammaRamp(m_monitor);
+    if (glfw_gamma_ramp != nullptr) {
+        const auto ramp_size = static_cast<size_t>(glfw_gamma_ramp->size);
+
+        m_gamma_ramp.red.assign(glfw_gamma_ramp->red, glfw_gamma_ramp->red + ramp_size);
+        m_gamma_ramp.green.assign(glfw_gamma_ramp->green, glfw_gamma_ramp->green + ramp_size);
+        m_gamma_ramp.blue.assign(glfw_gamma_ramp->blue, glfw_gamma_ramp->blue + ramp_size);
+    } else {
+        m_gamma_ramp = {};
     }
 }
 
