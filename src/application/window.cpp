@@ -6,11 +6,11 @@ namespace tst::application {
 
 window::window(std::string name,
                core::extent<int32_t> size,
-               window::visibility is_visible,
-               window::focus has_focus,
+               window::visibility_mode is_visible,
+               window::focus_mode has_focus,
                window::cursor_mode cursor,
                window::fullscreen_mode fullscreen,
-               window::state window_state) noexcept :
+               window::state_mode window_state) noexcept :
     m_name(std::move(name)),
     m_size(size),
     m_is_visible(is_visible),
@@ -36,19 +36,19 @@ const core::extent<int32_t>& window::get_size() const noexcept {
     return m_size;
 }
 
-void window::set_visibility(window::visibility is_visible) noexcept {
+void window::set_visibility(window::visibility_mode is_visible) noexcept {
     m_is_visible = is_visible;
 }
 
-window::visibility window::get_visibility() const noexcept {
+window::visibility_mode window::get_visibility() const noexcept {
     return m_is_visible;
 }
 
-void window::set_focus(window::focus has_focus) noexcept {
+void window::set_focus(window::focus_mode has_focus) noexcept {
     m_has_focus = has_focus;
 }
 
-window::focus window::get_focus() const noexcept {
+window::focus_mode window::get_focus() const noexcept {
     return m_has_focus;
 }
 
@@ -68,11 +68,11 @@ window::fullscreen_mode window::get_fullscreen_mode() const noexcept {
     return m_fullscreen_mode;
 }
 
-void window::set_state(window::state window_state) noexcept {
+void window::set_state(window::state_mode window_state) noexcept {
     m_window_state = window_state;
 }
 
-window::state window::get_state() const noexcept {
+window::state_mode window::get_state() const noexcept {
     return m_window_state;
 }
 

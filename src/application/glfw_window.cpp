@@ -17,19 +17,23 @@ namespace {
 glfw_window::glfw_window(std::string name,
                          core::extent<int32_t> size,
                          const device::monitor& monitor,
-                         visibility is_visible,
-                         focus has_focus,
+                         visibility_mode is_visible,
+                         focus_mode has_focus,
                          cursor_mode cursor,
                          fullscreen_mode fullscreen,
-                         state window_state) noexcept :
+                         state_mode window_state,
+                         vsync vsync_mode,
+                         const glfw_context_hints& context_hints) noexcept :
     window(std::move(name), size, is_visible, has_focus, cursor, fullscreen, window_state),
-    m_monitor(monitor) {
+    m_monitor(monitor),
+    m_vsync(vsync_mode) {
+    // GLFW only creates the native window surface here (GLFW_NO_API). Actual
+    // vsync behavior should be selected later via Vulkan present mode.
     const auto& window_size = get_size();
 
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_VISIBLE, to_glfw_visibility(get_visibility()));
-    glfwWindowHint(GLFW_FOCUSED, to_glfw_focus(get_focus()));
-    glfwWindowHint(GLFW_MAXIMIZED, to_glfw_maximized(get_state()));
+    for (const auto& hint : context_hints) {
+        glfwWindowHint(hint.target, hint.value);
+    }
 
     m_glfw_window = glfwCreateWindow(window_size.width,
                                      window_size.height,
@@ -38,12 +42,12 @@ glfw_window::glfw_window(std::string name,
                                      nullptr);
     if (m_glfw_window != nullptr) {
         glfwSetInputMode(m_glfw_window, GLFW_CURSOR, to_glfw_cursor_mode(get_cursor_mode()));
-        if (get_state() == state::iconified) {
+        if (get_state() == state_mode::iconified) {
             glfwIconifyWindow(m_glfw_window);
         }
     } else {
-        set_visibility(visibility::hidden);
-        set_focus(focus::unfocused);
+        set_visibility(visibility_mode::hidden);
+        set_focus(focus_mode::unfocused);
     }
 }
 
@@ -62,33 +66,14 @@ const device::monitor& glfw_window::get_monitor() const noexcept {
     return m_monitor;
 }
 
-int glfw_window::to_glfw_visibility(const visibility mode) noexcept {
-    switch (mode) {
-        case visibility::visible:
-            return GLFW_TRUE;
-        case visibility::hidden:
-            return GLFW_FALSE;
-        default:
-            return GLFW_TRUE;
-    }
+void glfw_window::set_vsync(const vsync vsync_mode) noexcept {
+    // This stores intent for the Vulkan renderer; GLFW does not apply vsync
+    // when the window is created with GLFW_NO_API.
+    m_vsync = vsync_mode;
 }
 
-int glfw_window::to_glfw_focus(const focus mode) noexcept {
-    switch (mode) {
-        case focus::focused:
-            return GLFW_TRUE;
-        case focus::unfocused:
-            return GLFW_FALSE;
-        default:
-            return GLFW_TRUE;
-    }
-}
-
-int glfw_window::to_glfw_maximized(const state window_state) noexcept {
-    if (window_state == state::maximized) {
-        return GLFW_TRUE;
-    }
-    return GLFW_FALSE;
+glfw_window::vsync glfw_window::get_vsync() const noexcept {
+    return m_vsync;
 }
 
 int glfw_window::to_glfw_cursor_mode(const cursor_mode mode) noexcept {
