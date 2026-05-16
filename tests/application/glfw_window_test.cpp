@@ -36,7 +36,7 @@ TEST(glfw_window, creates_window_and_keeps_monitor_reference) {
     }
 
     const device::monitor primary_monitor(primary_handle);
-    const auto hints = glfw_context(window::visibility_mode::hidden, window::focus_mode::unfocused, window::state_mode::opened);
+    const auto hints = glfw_context(window::visibility_mode::hidden, window::focus_mode::unfocused, window::window_display_state::opened);
 
     glfw_window test_window("GLFW test",
                             core::extent<int32_t>{800, 600},
@@ -45,7 +45,7 @@ TEST(glfw_window, creates_window_and_keeps_monitor_reference) {
                             window::focus_mode::unfocused,
                             window::cursor_mode::normal,
                             window::fullscreen_mode::windowed,
-                            window::state_mode::opened,
+                            window::window_display_state::opened,
                             glfw_window::vsync::disabled,
                             hints);
 
@@ -53,7 +53,7 @@ TEST(glfw_window, creates_window_and_keeps_monitor_reference) {
     EXPECT_EQ(test_window.get_monitor().get_handle(), primary_handle);
     EXPECT_EQ(test_window.get_visibility(), window::visibility_mode::hidden);
     EXPECT_EQ(test_window.get_focus(), window::focus_mode::unfocused);
-    EXPECT_EQ(test_window.get_state(), window::state_mode::opened);
+    EXPECT_EQ(test_window.get_state(), window::window_display_state::opened);
     EXPECT_EQ(test_window.get_vsync(), glfw_window::vsync::disabled);
 
     test_window.set_vsync(glfw_window::vsync::enabled);

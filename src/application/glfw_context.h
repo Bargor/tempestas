@@ -11,10 +11,8 @@ struct glfw_window_hint {
     int value{};
 };
 
-using glfw_context_hints = std::array<glfw_window_hint, 4>;
+using glfw_context_hints = std::array<glfw_window_hint, 31>;
 
-glfw_context_hints glfw_context(window::visibility_mode visibility,
-                                window::focus_mode focus,
-                                window::state_mode state) noexcept;
+glfw_context_hints glfw_context() noexcept;
 
 } // namespace tst::application

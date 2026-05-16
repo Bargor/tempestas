@@ -10,7 +10,7 @@ TEST(window, constructor_assigns_all_properties) {
                        window::focus_mode::unfocused,
                        window::cursor_mode::disabled,
                        window::fullscreen_mode::fullscreen,
-                       window::state_mode::maximized);
+                       window::window_display_state::maximized);
 
     EXPECT_EQ(test_window.get_name(), "Main");
     EXPECT_EQ(test_window.get_size(), (core::extent<int32_t>{1280, 720}));
@@ -18,7 +18,7 @@ TEST(window, constructor_assigns_all_properties) {
     EXPECT_EQ(test_window.get_focus(), window::focus_mode::unfocused);
     EXPECT_EQ(test_window.get_cursor_mode(), window::cursor_mode::disabled);
     EXPECT_EQ(test_window.get_fullscreen_mode(), window::fullscreen_mode::fullscreen);
-    EXPECT_EQ(test_window.get_state(), window::state_mode::maximized);
+    EXPECT_EQ(test_window.get_state(), window::window_display_state::maximized);
 }
 
 TEST(window, setters_update_properties) {
@@ -30,7 +30,7 @@ TEST(window, setters_update_properties) {
     test_window.set_focus(window::focus_mode::unfocused);
     test_window.set_cursor_mode(window::cursor_mode::hidden);
     test_window.set_fullscreen_mode(window::fullscreen_mode::fullscreen);
-    test_window.set_state(window::state_mode::iconified);
+    test_window.set_state(window::window_display_state::iconified);
 
     EXPECT_EQ(test_window.get_name(), "Editor");
     EXPECT_EQ(test_window.get_size(), (core::extent<int32_t>{1920, 1080}));
@@ -38,7 +38,7 @@ TEST(window, setters_update_properties) {
     EXPECT_EQ(test_window.get_focus(), window::focus_mode::unfocused);
     EXPECT_EQ(test_window.get_cursor_mode(), window::cursor_mode::hidden);
     EXPECT_EQ(test_window.get_fullscreen_mode(), window::fullscreen_mode::fullscreen);
-    EXPECT_EQ(test_window.get_state(), window::state_mode::iconified);
+    EXPECT_EQ(test_window.get_state(), window::window_display_state::iconified);
 }
 
 } // namespace tst::application

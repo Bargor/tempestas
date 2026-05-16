@@ -10,7 +10,7 @@ window::window(std::string name,
                window::focus_mode has_focus,
                window::cursor_mode cursor,
                window::fullscreen_mode fullscreen,
-               window::state_mode window_state) noexcept :
+               window::window_display_state window_state) noexcept :
     m_name(std::move(name)),
     m_size(size),
     m_is_visible(is_visible),
@@ -68,11 +68,11 @@ window::fullscreen_mode window::get_fullscreen_mode() const noexcept {
     return m_fullscreen_mode;
 }
 
-void window::set_state(window::state_mode window_state) noexcept {
+void window::set_state(window::window_display_state window_state) noexcept {
     m_window_state = window_state;
 }
 
-window::state_mode window::get_state() const noexcept {
+window::window_display_state window::get_state() const noexcept {
     return m_window_state;
 }
 

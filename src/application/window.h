@@ -29,7 +29,7 @@ public:
         fullscreen,
     };
 
-    enum class state_mode {
+    enum class window_display_state {
         opened,
         iconified,
         maximized,
@@ -41,7 +41,7 @@ public:
            focus_mode has_focus = focus_mode::focused,
            cursor_mode cursor = cursor_mode::normal,
            fullscreen_mode fullscreen = fullscreen_mode::windowed,
-           state_mode window_state = state_mode::opened) noexcept;
+           window_display_state window_state = window_display_state::opened) noexcept;
     virtual ~window() = default;
 
     window(const window&) = delete;
@@ -67,8 +67,8 @@ public:
     void set_fullscreen_mode(fullscreen_mode mode) noexcept;
     fullscreen_mode get_fullscreen_mode() const noexcept;
 
-    void set_state(state_mode window_state) noexcept;
-    state_mode get_state() const noexcept;
+    void set_state(window_display_state window_state) noexcept;
+    window_display_state get_state() const noexcept;
 
 private:
     std::string m_name;
@@ -77,7 +77,7 @@ private:
     focus_mode m_has_focus{focus_mode::focused};
     cursor_mode m_cursor_mode{cursor_mode::normal};
     fullscreen_mode m_fullscreen_mode{fullscreen_mode::windowed};
-    state_mode m_window_state{state_mode::opened};
+    window_display_state m_window_state{window_display_state::opened};
 };
 
 } // namespace tst::application

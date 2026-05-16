@@ -24,7 +24,7 @@ public:
                 focus_mode has_focus,
                 cursor_mode cursor,
                 fullscreen_mode fullscreen,
-                state_mode window_state,
+                window_display_state window_state,
                 vsync vsync_mode,
                 const glfw_context_hints& context_hints) noexcept;
     ~glfw_window() override;

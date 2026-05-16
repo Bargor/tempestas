@@ -1,18 +1,10 @@
 #include "glfw_window.h"
 
+#include <cstdlib>
 #include <utility>
+#include <fmt/printf.h>
 
 namespace tst::application {
-
-namespace {
-    GLFWmonitor* to_glfw_monitor(const window::fullscreen_mode mode, const device::monitor& monitor) noexcept {
-        if (mode == window::fullscreen_mode::fullscreen) {
-            return monitor.get_handle();
-        }
-
-        return nullptr;
-    }
-} // namespace
 
 glfw_window::glfw_window(std::string name,
                          core::extent<int32_t> size,
@@ -21,7 +13,7 @@ glfw_window::glfw_window(std::string name,
                          focus_mode has_focus,
                          cursor_mode cursor,
                          fullscreen_mode fullscreen,
-                         state_mode window_state,
+                         window_display_state window_state,
                          vsync vsync_mode,
                          const glfw_context_hints& context_hints) noexcept :
     window(std::move(name), size, is_visible, has_focus, cursor, fullscreen, window_state),
@@ -35,27 +27,36 @@ glfw_window::glfw_window(std::string name,
         glfwWindowHint(hint.target, hint.value);
     }
 
+    // GLFW expects a monitor handle only when creating a fullscreen window.
+    const auto get_glfw_monitor = [this]() noexcept -> GLFWmonitor* {
+        if (get_fullscreen_mode() == window::fullscreen_mode::fullscreen) {
+            return m_monitor.get_handle();
+        }
+        return nullptr;
+    };
+
     m_glfw_window = glfwCreateWindow(window_size.width,
                                      window_size.height,
                                      get_name().c_str(),
-                                     to_glfw_monitor(get_fullscreen_mode(), m_monitor),
+                                     get_glfw_monitor(),
                                      nullptr);
-    if (m_glfw_window != nullptr) {
-        glfwSetInputMode(m_glfw_window, GLFW_CURSOR, to_glfw_cursor_mode(get_cursor_mode()));
-        if (get_state() == state_mode::iconified) {
-            glfwIconifyWindow(m_glfw_window);
-        }
-    } else {
-        set_visibility(visibility_mode::hidden);
-        set_focus(focus_mode::unfocused);
+    if (m_glfw_window == nullptr) {
+        const char* glfw_error_description = nullptr;
+        glfwGetError(&glfw_error_description);
+        fmt::printf("Failed to create GLFW window: %s\n",
+                    glfw_error_description != nullptr ? glfw_error_description : "unknown GLFW error");
+        std::abort();
+    }
+
+    glfwSetInputMode(m_glfw_window, GLFW_CURSOR, to_glfw_cursor_mode(get_cursor_mode()));
+    if (get_state() == window_display_state::iconified) {
+        glfwIconifyWindow(m_glfw_window);
     }
 }
 
 glfw_window::~glfw_window() {
-    if (m_glfw_window != nullptr) {
-        glfwDestroyWindow(m_glfw_window);
-        m_glfw_window = nullptr;
-    }
+    glfwDestroyWindow(m_glfw_window);
+    m_glfw_window = nullptr;
 }
 
 GLFWwindow* glfw_window::get_handle() const noexcept {
