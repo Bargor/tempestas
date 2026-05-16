@@ -1,6 +1,7 @@
 #include "glfw_window.h"
 
 #include <cstdlib>
+#include <device/monitor.h>
 #include <fmt/printf.h>
 #include <utility>
 
@@ -8,7 +9,7 @@ namespace tst::application {
 
 glfw_window::glfw_window(std::string name,
                          core::extent<int32_t> size,
-                         const device::monitor& monitor,
+                         const device::monitor* monitor,
                          visibility_mode is_visible,
                          focus_mode has_focus,
                          cursor_mode cursor,
@@ -30,7 +31,11 @@ glfw_window::glfw_window(std::string name,
     // GLFW expects a monitor handle only when creating a fullscreen window.
     const auto get_glfw_monitor = [this]() noexcept -> GLFWmonitor* {
         if (get_fullscreen_mode() == window::fullscreen_mode::fullscreen) {
-            return m_monitor.get_handle();
+            if (m_monitor == nullptr) {
+                fmt::printf("Failed to create GLFW window: fullscreen mode requires a monitor.\n");
+                std::abort();
+            }
+            return m_monitor->get_handle();
         }
         return nullptr;
     };
@@ -60,7 +65,7 @@ GLFWwindow* glfw_window::get_handle() const noexcept {
     return m_glfw_window;
 }
 
-const device::monitor& glfw_window::get_monitor() const noexcept {
+const device::monitor* glfw_window::get_monitor() const noexcept {
     return m_monitor;
 }
 

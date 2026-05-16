@@ -4,7 +4,10 @@
 #include "window.h"
 
 #include <GLFW/glfw3.h>
-#include <device/monitor.h>
+
+namespace tst::device {
+class monitor;
+}
 
 namespace tst::application {
 
@@ -19,7 +22,7 @@ public:
 
     glfw_window(std::string name,
                 core::extent<int32_t> size,
-                const device::monitor& monitor,
+                const device::monitor* monitor,
                 visibility_mode is_visible,
                 focus_mode has_focus,
                 cursor_mode cursor,
@@ -35,7 +38,7 @@ public:
     glfw_window& operator=(glfw_window&&) = delete;
 
     GLFWwindow* get_handle() const noexcept;
-    const device::monitor& get_monitor() const noexcept;
+    const device::monitor* get_monitor() const noexcept;
 
     void set_vsync(vsync vsync_mode) noexcept;
     vsync get_vsync() const noexcept;
@@ -45,7 +48,7 @@ private:
 
 private:
     GLFWwindow* m_glfw_window{};
-    const device::monitor& m_monitor;
+    const device::monitor* m_monitor{};
     vsync m_vsync{vsync::enabled};
 };
 

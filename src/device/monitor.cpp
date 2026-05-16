@@ -1,5 +1,8 @@
 #include "monitor.h"
 
+#include <cstdlib>
+#include <cstdio>
+
 namespace tst::device {
 
 namespace {
@@ -16,22 +19,14 @@ namespace {
 } // namespace
 
 monitor::monitor(GLFWmonitor* monitor) noexcept : m_monitor(monitor) {
+    if (m_monitor == nullptr) {
+        std::fprintf(stderr, "device::monitor requires a valid GLFWmonitor handle.\n");
+        std::abort();
+    }
     refresh();
 }
 
 void monitor::refresh() noexcept {
-    if (m_monitor == nullptr) {
-        m_name.clear();
-        m_is_primary = false;
-        m_position = {};
-        m_physical_size_mm = {};
-        m_work_area = {};
-        m_content_scale = {};
-        m_video_mode.reset();
-        m_gamma_ramp = {};
-        return;
-    }
-
     const char* monitor_name = glfwGetMonitorName(m_monitor);
     m_name = monitor_name != nullptr ? monitor_name : "";
 
