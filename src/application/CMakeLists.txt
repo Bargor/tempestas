@@ -23,4 +23,5 @@ target_link_libraries(application
         tst::core
         tst::device
         glfw
+        fmt::fmt
 )
