@@ -131,7 +131,15 @@ jobs:
         working-directory: build-${{ matrix.config.name }}
         run: cmake --build . --parallel
 
-      - name: Run tests
+      - name: Run tests (ASan)
+        if: matrix.config.sanitizer == 'address'
+        working-directory: build-${{ matrix.config.name }}
+        env:
+          LSAN_OPTIONS: suppressions=${{ github.workspace }}/.github/lsan/glfw_x11.supp:print_suppressions=0
+        run: xvfb-run -a ctest --output-on-failure -E '^rendering[.]lavapipe$'
+
+      - name: Run tests (non-ASan)
+        if: matrix.config.sanitizer != 'address'
         working-directory: build-${{ matrix.config.name }}
         run: xvfb-run -a ctest --output-on-failure -E '^rendering[.]lavapipe$'
 
