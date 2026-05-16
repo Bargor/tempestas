@@ -1,7 +1,7 @@
 #include "monitor.h"
 
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 
 namespace tst::device {
 

@@ -86,7 +86,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y wayland-protocols libwayland-dev libxkbcommon-dev libx11-dev xorg-dev mesa-vulkan-drivers vulkan-tools
+          sudo apt-get install -y wayland-protocols libwayland-dev libxkbcommon-dev libx11-dev xorg-dev xvfb mesa-vulkan-drivers vulkan-tools
 
       - name: Download Vulkan SDK 1.4.335.0
         run: |
@@ -133,7 +133,7 @@ jobs:
 
       - name: Run tests
         working-directory: build-${{ matrix.config.name }}
-        run: ctest --output-on-failure -E '^rendering[.]lavapipe$'
+        run: xvfb-run -a ctest --output-on-failure -E '^rendering[.]lavapipe$'
 
       - name: Verify Lavapipe ICD on Linux
         run: |
