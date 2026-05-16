@@ -36,7 +36,7 @@ TEST(glfw_window, creates_window_and_keeps_monitor_reference) {
     }
 
     const device::monitor primary_monitor(primary_handle);
-    const auto hints = glfw_context(window::visibility_mode::hidden, window::focus_mode::unfocused, window::window_display_state::opened);
+    const auto hints = glfw_context();
 
     glfw_window test_window("GLFW test",
                             core::extent<int32_t>{800, 600},

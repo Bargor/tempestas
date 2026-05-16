@@ -10,14 +10,14 @@ window::window(std::string name,
                window::focus_mode has_focus,
                window::cursor_mode cursor,
                window::fullscreen_mode fullscreen,
-               window::window_display_state window_state) noexcept :
-    m_name(std::move(name)),
-    m_size(size),
-    m_is_visible(is_visible),
-    m_has_focus(has_focus),
-    m_cursor_mode(cursor),
-    m_fullscreen_mode(fullscreen),
-    m_window_state(window_state) {
+               window::window_display_state window_state) noexcept
+    : m_name(std::move(name))
+    , m_size(size)
+    , m_is_visible(is_visible)
+    , m_has_focus(has_focus)
+    , m_cursor_mode(cursor)
+    , m_fullscreen_mode(fullscreen)
+    , m_window_state(window_state) {
 }
 
 void window::set_name(std::string name) noexcept {

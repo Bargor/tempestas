@@ -1,8 +1,8 @@
 #include "glfw_window.h"
 
 #include <cstdlib>
-#include <utility>
 #include <fmt/printf.h>
+#include <utility>
 
 namespace tst::application {
 
@@ -15,10 +15,10 @@ glfw_window::glfw_window(std::string name,
                          fullscreen_mode fullscreen,
                          window_display_state window_state,
                          vsync vsync_mode,
-                         const glfw_context_hints& context_hints) noexcept :
-    window(std::move(name), size, is_visible, has_focus, cursor, fullscreen, window_state),
-    m_monitor(monitor),
-    m_vsync(vsync_mode) {
+                         const glfw_context_hints& context_hints) noexcept
+    : window(std::move(name), size, is_visible, has_focus, cursor, fullscreen, window_state)
+    , m_monitor(monitor)
+    , m_vsync(vsync_mode) {
     // GLFW only creates the native window surface here (GLFW_NO_API). Actual
     // vsync behavior should be selected later via Vulkan present mode.
     const auto& window_size = get_size();
@@ -35,11 +35,8 @@ glfw_window::glfw_window(std::string name,
         return nullptr;
     };
 
-    m_glfw_window = glfwCreateWindow(window_size.width,
-                                     window_size.height,
-                                     get_name().c_str(),
-                                     get_glfw_monitor(),
-                                     nullptr);
+    m_glfw_window =
+        glfwCreateWindow(window_size.width, window_size.height, get_name().c_str(), get_glfw_monitor(), nullptr);
     if (m_glfw_window == nullptr) {
         const char* glfw_error_description = nullptr;
         glfwGetError(&glfw_error_description);
@@ -79,14 +76,14 @@ glfw_window::vsync glfw_window::get_vsync() const noexcept {
 
 int glfw_window::to_glfw_cursor_mode(const cursor_mode mode) noexcept {
     switch (mode) {
-        case cursor_mode::normal:
-            return GLFW_CURSOR_NORMAL;
-        case cursor_mode::hidden:
-            return GLFW_CURSOR_HIDDEN;
-        case cursor_mode::disabled:
-            return GLFW_CURSOR_DISABLED;
-        default:
-            return GLFW_CURSOR_NORMAL;
+    case cursor_mode::normal:
+        return GLFW_CURSOR_NORMAL;
+    case cursor_mode::hidden:
+        return GLFW_CURSOR_HIDDEN;
+    case cursor_mode::disabled:
+        return GLFW_CURSOR_DISABLED;
+    default:
+        return GLFW_CURSOR_NORMAL;
     }
 }
 
