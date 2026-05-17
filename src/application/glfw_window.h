@@ -11,7 +11,7 @@ class monitor;
 
 namespace tst::application {
 
-class glfw_window final : public window {
+class glfw_window : public window {
 public:
     glfw_window(std::string name,
                 core::extent<int32_t> size,
