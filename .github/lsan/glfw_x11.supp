@@ -1,0 +1,4 @@
+# Known third-party GLFW/X11 allocations reported as leaks under LSan
+# in headless CI environments. Keep suppressions narrow.
+leak:_glfwConnectX11
+leak:_glfwInitX11
