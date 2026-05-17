@@ -1,11 +1,14 @@
 set(APPLICATION_SOURCES
+    application.cpp
     arg_parser.cpp
     window.cpp
+    main_window.cpp
     glfw_context.cpp
     glfw_window.cpp
 )
 
 set(APPLICATION_HEADERS
+    application.h
     arg_parser.h
     window.h
     main_window.h
