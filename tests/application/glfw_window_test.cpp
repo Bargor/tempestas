@@ -55,7 +55,6 @@ TEST(glfw_window, creates_window_in_windowed_mode_without_monitor) {
                             window::cursor_mode::normal,
                             window::fullscreen_mode::windowed,
                             window::window_display_state::opened,
-                            glfw_window::vsync::disabled,
                             hints);
 
     EXPECT_NE(test_window.get_handle(), nullptr);
@@ -63,10 +62,6 @@ TEST(glfw_window, creates_window_in_windowed_mode_without_monitor) {
     EXPECT_EQ(test_window.get_visibility(), window::visibility_mode::hidden);
     EXPECT_EQ(test_window.get_focus(), window::focus_mode::unfocused);
     EXPECT_EQ(test_window.get_state(), window::window_display_state::opened);
-    EXPECT_EQ(test_window.get_vsync(), glfw_window::vsync::disabled);
-
-    test_window.set_vsync(glfw_window::vsync::enabled);
-    EXPECT_EQ(test_window.get_vsync(), glfw_window::vsync::enabled);
 }
 
 } // namespace tst::application

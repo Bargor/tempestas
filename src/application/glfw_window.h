@@ -13,13 +13,6 @@ namespace tst::application {
 
 class glfw_window final : public window {
 public:
-    // GLFW does not control vsync when using GLFW_NO_API; this flag describes
-    // the desired present behavior for the Vulkan swapchain configuration.
-    enum class vsync {
-        enabled,
-        disabled,
-    };
-
     glfw_window(std::string name,
                 core::extent<int32_t> size,
                 const device::monitor* monitor,
@@ -28,7 +21,6 @@ public:
                 cursor_mode cursor,
                 fullscreen_mode fullscreen,
                 window_display_state window_state,
-                vsync vsync_mode,
                 const glfw_context_hints& context_hints) noexcept;
     ~glfw_window() override;
 
@@ -40,16 +32,12 @@ public:
     GLFWwindow* get_handle() const noexcept;
     const device::monitor* get_monitor() const noexcept;
 
-    void set_vsync(vsync vsync_mode) noexcept;
-    vsync get_vsync() const noexcept;
-
 private:
     static int to_glfw_cursor_mode(cursor_mode mode) noexcept;
 
 private:
     GLFWwindow* m_glfw_window{};
     const device::monitor* m_monitor{};
-    vsync m_vsync{vsync::enabled};
 };
 
 } // namespace tst::application

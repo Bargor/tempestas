@@ -15,7 +15,6 @@ main_window::main_window(const device::monitor& monitor) noexcept
                   window::cursor_mode::normal,
                   window::fullscreen_mode::windowed,
                   window::window_display_state::opened,
-                  glfw_window::vsync::enabled,
                   glfw_context()) {
 }
 
