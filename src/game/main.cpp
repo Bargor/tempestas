@@ -1,4 +1,6 @@
+#include "application/application.h"
 #include "application/arg_parser.h"
+#include "device/monitor.h"
 #include "rendering/instance.h"
 #include "rendering/utils.h"
 
@@ -22,7 +24,7 @@ void shutdown_glfw() {
 } // namespace tst
 
 int main(int argc, char* argv[]) {
-    [[maybe_unused]] const auto programParams = tst::application::parse_program_arguments(argc, argv);
+    const auto program_params = tst::application::parse_program_arguments(argc, argv);
 
     if (!tst::initialize_glfw()) {
         return EXIT_FAILURE;
@@ -30,8 +32,13 @@ int main(int argc, char* argv[]) {
 
     fmt::printf("GLFW initialized successfully\n");
 
+    tst::device::monitor primary_monitor(glfwGetPrimaryMonitor());
+    tst::application::application application(program_params, primary_monitor);
+
     [[maybe_unused]] const auto& vulkan_instance = tst::rendering::instance::get_instance();
     fmt::printf("Vulkan instance created successfully\n");
+
+    application.run();
 
     tst::shutdown_glfw();
     return EXIT_SUCCESS;

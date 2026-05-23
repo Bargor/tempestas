@@ -1,4 +1,5 @@
 set(APPLICATION_TEST_SOURCES
+    application_test.cpp
     window_test.cpp
     glfw_window_test.cpp
 )

@@ -15,13 +15,8 @@ glfw_window::glfw_window(std::string name,
                          cursor_mode cursor,
                          fullscreen_mode fullscreen,
                          window_display_state window_state,
-                         vsync vsync_mode,
                          const glfw_context_hints& context_hints) noexcept
-    : window(std::move(name), size, is_visible, has_focus, cursor, fullscreen, window_state)
-    , m_monitor(monitor)
-    , m_vsync(vsync_mode) {
-    // GLFW only creates the native window surface here (GLFW_NO_API). Actual
-    // vsync behavior should be selected later via Vulkan present mode.
+    : window(std::move(name), size, is_visible, has_focus, cursor, fullscreen, window_state), m_monitor(monitor) {
     const auto& window_size = get_size();
 
     for (const auto& hint : context_hints) {
@@ -67,16 +62,6 @@ GLFWwindow* glfw_window::get_handle() const noexcept {
 
 const device::monitor* glfw_window::get_monitor() const noexcept {
     return m_monitor;
-}
-
-void glfw_window::set_vsync(const vsync vsync_mode) noexcept {
-    // This stores intent for the Vulkan renderer; GLFW does not apply vsync
-    // when the window is created with GLFW_NO_API.
-    m_vsync = vsync_mode;
-}
-
-glfw_window::vsync glfw_window::get_vsync() const noexcept {
-    return m_vsync;
 }
 
 int glfw_window::to_glfw_cursor_mode(const cursor_mode mode) noexcept {

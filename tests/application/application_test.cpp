@@ -1,4 +1,6 @@
-#include <application/glfw_window.h>
+#include <application/application.h>
+#include <application/arg_parser.h>
+#include <device/monitor.h>
 #include <gtest/gtest.h>
 
 namespace tst::application {
@@ -37,7 +39,7 @@ namespace {
     };
 } // namespace
 
-TEST(glfw_window, creates_window_in_windowed_mode_without_monitor) {
+TEST(application, constructor_creates_main_window) {
     glfw_guard glfw;
     if (!glfw.initialized()) {
         GTEST_SKIP()
@@ -45,23 +47,25 @@ TEST(glfw_window, creates_window_in_windowed_mode_without_monitor) {
             << " description=" << (glfw.error_description() != nullptr ? glfw.error_description() : "no description");
     }
 
-    const auto hints = glfw_context();
+    device::monitor primary_monitor(glfwGetPrimaryMonitor());
+    [[maybe_unused]] application test_application(parse_program_arguments(0, nullptr), primary_monitor);
+    SUCCEED();
+}
 
-    glfw_window test_window("GLFW test",
-                            core::extent<int32_t>{800, 600},
-                            nullptr,
-                            window::visibility_mode::hidden,
-                            window::focus_mode::unfocused,
-                            window::cursor_mode::normal,
-                            window::fullscreen_mode::windowed,
-                            window::window_display_state::opened,
-                            hints);
+TEST(application, DISABLED_run_returns_when_main_window_should_close) {
+    glfw_guard glfw;
+    if (!glfw.initialized()) {
+        GTEST_SKIP()
+            << "GLFW initialization failed in test environment. error_code=" << glfw.error_code()
+            << " description=" << (glfw.error_description() != nullptr ? glfw.error_description() : "no description");
+    }
 
-    EXPECT_NE(test_window.get_handle(), nullptr);
-    EXPECT_EQ(test_window.get_monitor(), nullptr);
-    EXPECT_EQ(test_window.get_visibility(), window::visibility_mode::hidden);
-    EXPECT_EQ(test_window.get_focus(), window::focus_mode::unfocused);
-    EXPECT_EQ(test_window.get_state(), window::window_display_state::opened);
+    device::monitor primary_monitor(glfwGetPrimaryMonitor());
+    application test_application(parse_program_arguments(0, nullptr), primary_monitor);
+
+    test_application.run();
+
+    SUCCEED();
 }
 
 } // namespace tst::application
