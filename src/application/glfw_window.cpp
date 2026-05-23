@@ -16,8 +16,7 @@ glfw_window::glfw_window(std::string name,
                          fullscreen_mode fullscreen,
                          window_display_state window_state,
                          const glfw_context_hints& context_hints) noexcept
-    : window(std::move(name), size, is_visible, has_focus, cursor, fullscreen, window_state)
-    , m_monitor(monitor) {
+    : window(std::move(name), size, is_visible, has_focus, cursor, fullscreen, window_state), m_monitor(monitor) {
     const auto& window_size = get_size();
 
     for (const auto& hint : context_hints) {
