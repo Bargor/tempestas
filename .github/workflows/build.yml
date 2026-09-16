@@ -181,6 +181,7 @@ jobs:
           install_lavapipe: true
           cache: true
           stripdown: true
+          github_token: ${{ github.token }}
 
       - name: Install CMake 4.2+
         run: choco install cmake -y
@@ -193,7 +194,7 @@ jobs:
 
       - name: Configure CMake
         working-directory: build-${{ matrix.config.name }}
-        run: cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=${{ matrix.config.type }} -DTST_ENABLE_TESTS=ON
+        run: cmake .. -G "Visual Studio 18 2026" -A x64 -DCMAKE_BUILD_TYPE=${{ matrix.config.type }} -DTST_ENABLE_TESTS=ON
 
       - name: Build
         working-directory: build-${{ matrix.config.name }}
