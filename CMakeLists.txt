@@ -43,12 +43,13 @@ add_subdirectory(third_party/fmt)
 find_package(Vulkan REQUIRED)
 
 include(${PROJECT_SOURCE_DIR}/cmake/TstAddLibrary.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/TstAddProjectSubdirectory.cmake)
 
-# Include subdirectories
-add_subdirectory(src)
+# Include project subdirectories
+tst_add_project_subdirectory(src)
 
 if(TST_ENABLE_TESTS)
     enable_testing()
     add_subdirectory(third_party/googletest)
-    add_subdirectory(tests)
+    tst_add_project_subdirectory(tests)
 endif()

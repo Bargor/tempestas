@@ -1,6 +1,7 @@
 set(CORE_TEST_SOURCES
     container/queue_test.cpp
     geometry_test.cpp
+    util/variant_test.cpp
 )
 
 tst_add_executable(core_test

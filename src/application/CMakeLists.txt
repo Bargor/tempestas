@@ -15,6 +15,7 @@ set(APPLICATION_HEADERS
     glfw_context.h
     glfw_window.h
     event.h
+    event_processor.h
 )
 
 tst_add_library(application

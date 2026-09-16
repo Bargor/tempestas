@@ -1,11 +1,11 @@
 #pragma once
 
-#include <device/keyboard.h>
-#include <device/mouse.h>
 #include <application/window.h>
-
 #include <chrono>
 #include <cstdint>
+#include <device/keyboard.h>
+#include <device/mouse.h>
+#include <type_traits>
 #include <variant>
 
 namespace tst::application {
@@ -60,20 +60,15 @@ struct event {
         std::chrono::microseconds value{};
     };
 
-    using payload = std::variant<mouse_position,
-                                 mouse_button,
-                                 scroll,
-                                 keyboard,
-                                 iconify,
-                                 focus,
-                                 framebuffer_size,
-                                 closed,
-                                 visibility,
-                                 cursor_mode,
-                                 time>;
+    using payload =
+        std::variant<mouse_position, mouse_button, scroll, keyboard, iconify, focus, framebuffer_size, closed, visibility, cursor_mode, time>;
 
     const void* source{};
     payload data{};
 };
+
+static_assert(std::is_default_constructible_v<event>, "event must be default-constructible");
+static_assert(std::is_trivially_copy_constructible_v<event>, "event must be trivially copy-constructible");
+static_assert(std::is_trivially_copy_assignable_v<event>, "event must be trivially copy-assignable");
 
 } // namespace tst::application
