@@ -64,6 +64,11 @@ const device::monitor* glfw_window::get_monitor() const noexcept {
     return m_monitor;
 }
 
+void glfw_window::set_cursor_mode(cursor_mode mode) noexcept {
+    window::set_cursor_mode(mode);
+    glfwSetInputMode(m_glfw_window, GLFW_CURSOR, to_glfw_cursor_mode(mode));
+}
+
 int glfw_window::to_glfw_cursor_mode(const cursor_mode mode) noexcept {
     switch (mode) {
     case cursor_mode::normal:

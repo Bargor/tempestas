@@ -5,6 +5,7 @@ set(APPLICATION_SOURCES
     main_window.cpp
     glfw_context.cpp
     glfw_window.cpp
+    input_processor.cpp
 )
 
 set(APPLICATION_HEADERS
@@ -16,6 +17,7 @@ set(APPLICATION_HEADERS
     glfw_window.h
     event.h
     event_processor.h
+    input_processor.h
 )
 
 tst_add_library(application
