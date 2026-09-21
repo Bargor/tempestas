@@ -64,7 +64,13 @@ struct event {
         std::variant<mouse_position, mouse_button, scroll, keyboard, iconify, focus, framebuffer_size, closed, visibility, cursor_mode, time>;
 
     const void* source{};
+#if defined(__clang__) && __clang_major__ == 21
+    // Clang 21 incorrectly rejects the variant default constructor for a nested first alternative while event is
+    // incomplete.
+    payload data{mouse_position{}};
+#else
     payload data{};
+#endif
 };
 
 static_assert(std::is_default_constructible_v<event>, "event must be default-constructible");
