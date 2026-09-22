@@ -3,6 +3,7 @@
 #include <application/glfw_context.h>
 #include <application/glfw_window.h>
 #include <application/input_processor.h>
+#include <cstdlib>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -175,23 +176,30 @@ TEST(input_processor, process_events_polls_and_dispatches_queued_events) {
     EXPECT_EQ(close_count, 1);
 }
 
-TEST(input_processor_death_test, rejects_existing_glfw_callback) {
-    glfw_guard glfw;
-    if (!glfw.initialized()) GTEST_SKIP() << "GLFW initialization failed";
+TEST(input_processor_DeathTest, rejects_existing_glfw_callback) {
+    GTEST_FLAG_SET(death_test_style, "threadsafe");
 
-    glfw_window test_window("Input test",
-                            {800, 600},
-                            nullptr,
-                            window::visibility_mode::hidden,
-                            window::focus_mode::unfocused,
-                            window::cursor_mode::normal,
-                            window::fullscreen_mode::windowed,
-                            window::window_display_state::opened,
-                            glfw_context());
-    event_processor<event> events;
-    ASSERT_EQ(glfwSetWindowFocusCallback(test_window.get_handle(), +[](GLFWwindow*, int) {}), nullptr);
+    EXPECT_DEATH(
+        {
+            glfw_guard glfw;
+            if (!glfw.initialized()) std::_Exit(EXIT_SUCCESS);
 
-    EXPECT_DEATH({ input_processor input(test_window, events); }, "");
+            glfw_window test_window("Input test",
+                                    {800, 600},
+                                    nullptr,
+                                    window::visibility_mode::hidden,
+                                    window::focus_mode::unfocused,
+                                    window::cursor_mode::normal,
+                                    window::fullscreen_mode::windowed,
+                                    window::window_display_state::opened,
+                                    glfw_context());
+            event_processor<event> events;
+            if (glfwSetWindowFocusCallback(test_window.get_handle(), +[](GLFWwindow*, int) {}) != nullptr)
+                std::_Exit(EXIT_SUCCESS);
+
+            input_processor input(test_window, events);
+        },
+        "");
 }
 
 TEST(input_processor, cursor_position_uses_relative_coordinates_only_when_disabled) {
