@@ -31,6 +31,7 @@ public:
 
     GLFWwindow* get_handle() const noexcept;
     const device::monitor* get_monitor() const noexcept;
+    void set_cursor_mode(cursor_mode mode) noexcept;
 
 private:
     static int to_glfw_cursor_mode(cursor_mode mode) noexcept;

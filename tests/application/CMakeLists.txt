@@ -1,5 +1,7 @@
 set(APPLICATION_TEST_SOURCES
     application_test.cpp
+    event_processor_test.cpp
+    input_processor_test.cpp
     window_test.cpp
     glfw_window_test.cpp
 )

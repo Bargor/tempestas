@@ -5,7 +5,7 @@
 
 namespace tst::device {
 
-enum class mouse_buttons : uint8_t {
+enum class mouse_button : uint8_t {
     button_left = GLFW_MOUSE_BUTTON_LEFT,
     button_right = GLFW_MOUSE_BUTTON_RIGHT,
     button_middle = GLFW_MOUSE_BUTTON_MIDDLE
