@@ -9,7 +9,7 @@
 namespace tst::application {
 
 input_processor::input_processor(glfw_window& window, event_processor<event>& events) noexcept
-    : m_window(window), m_events(events) {
+    : m_window(window), m_events_processor(events) {
     GLFWwindow* handle = m_window.get_handle();
     glfwGetCursorPos(handle, &m_last_cursor_position.x, &m_last_cursor_position.y);
     if (glfwGetWindowUserPointer(handle) != nullptr) {
@@ -60,7 +60,7 @@ input_processor::~input_processor() {
 
 void input_processor::process_events() {
     glfwPollEvents();
-    m_events.process_events();
+    m_events_processor.process_events();
 }
 
 input_processor& input_processor::from_window(GLFWwindow* handle) noexcept {
@@ -70,9 +70,15 @@ input_processor& input_processor::from_window(GLFWwindow* handle) noexcept {
 }
 
 void input_processor::on_focus(GLFWwindow* handle, int focused) noexcept {
-    from_window(handle).queue_event(event::focus{
-        focused == GLFW_TRUE ? window::focus_mode::focused : window::focus_mode::unfocused,
-    });
+    assert(focused == GLFW_TRUE || focused == GLFW_FALSE);
+    auto& processor = from_window(handle);
+    const auto mode = focused == GLFW_TRUE ? window::focus_mode::focused : window::focus_mode::unfocused;
+    if (processor.m_window.get_focus() == mode) {
+        assert(glfwGetWindowAttrib(handle, GLFW_FOCUSED) == focused);
+        return;
+    }
+
+    processor.m_window.on_focus(mode);
 }
 
 void input_processor::on_cursor_position(GLFWwindow* handle, double x, double y) noexcept {
@@ -109,21 +115,35 @@ void input_processor::on_key(GLFWwindow* handle, int key, int scancode, int acti
 }
 
 void input_processor::on_iconify(GLFWwindow* handle, int iconified) noexcept {
-    from_window(handle).queue_event(event::iconify{
-        iconified == GLFW_TRUE ? window::window_display_state::iconified : window::window_display_state::opened,
-    });
+    assert(iconified == GLFW_TRUE || iconified == GLFW_FALSE);
+    auto& processor = from_window(handle);
+    const auto state =
+        iconified == GLFW_TRUE ? window::window_display_state::iconified : window::window_display_state::opened;
+    if (processor.m_window.get_state() == state) {
+        assert(glfwGetWindowAttrib(handle, GLFW_ICONIFIED) == iconified);
+        return;
+    }
+
+    processor.m_window.on_iconify(state);
 }
 
 void input_processor::on_close(GLFWwindow* handle) noexcept {
-    from_window(handle).queue_event(event::closed{});
+    auto& processor = from_window(handle);
+    processor.m_window.on_close();
 }
 
 void input_processor::on_framebuffer_size(GLFWwindow* handle, int width, int height) noexcept {
-    from_window(handle).queue_event(event::framebuffer_size{{width, height}});
+    assert(width >= 0 && height >= 0);
+    auto& processor = from_window(handle);
+    const core::extent<int32_t> size{width, height};
+    if (processor.m_window.get_size() == size) return;
+
+    processor.m_window.on_framebuffer_size(size);
 }
 
-void input_processor::queue_event(event::payload payload) noexcept {
-    [[maybe_unused]] const bool queued = m_events.create_event(event{&m_window, payload});
+template<typename EventSubtype>
+void input_processor::queue_event(const EventSubtype& payload) noexcept {
+    [[maybe_unused]] const bool queued = m_events_processor.create_event(payload, this);
     assert(queued);
 }
 

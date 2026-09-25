@@ -3,14 +3,34 @@
 
 namespace tst::application {
 
+namespace {
+
+    class test_window final : public window {
+    public:
+        using window::window;
+
+        void close() noexcept override {
+            m_closed = true;
+        }
+
+        bool is_closed() const noexcept {
+            return m_closed;
+        }
+
+    private:
+        bool m_closed{};
+    };
+
+} // namespace
+
 TEST(window, constructor_assigns_all_properties) {
-    window test_window("Main",
-                       core::extent<int32_t>{1280, 720},
-                       window::visibility_mode::hidden,
-                       window::focus_mode::unfocused,
-                       window::cursor_mode::disabled,
-                       window::fullscreen_mode::fullscreen,
-                       window::window_display_state::maximized);
+    test_window test_window("Main",
+                            core::extent<int32_t>{1280, 720},
+                            window::visibility_mode::hidden,
+                            window::focus_mode::unfocused,
+                            window::cursor_mode::disabled,
+                            window::fullscreen_mode::fullscreen,
+                            window::window_display_state::maximized);
 
     EXPECT_EQ(test_window.get_name(), "Main");
     EXPECT_EQ(test_window.get_size(), (core::extent<int32_t>{1280, 720}));
@@ -22,7 +42,7 @@ TEST(window, constructor_assigns_all_properties) {
 }
 
 TEST(window, setters_update_properties) {
-    window test_window("Main", core::extent<int32_t>{640, 480});
+    test_window test_window("Main", core::extent<int32_t>{640, 480});
 
     test_window.set_name("Editor");
     test_window.set_size({1920, 1080});
@@ -39,6 +59,15 @@ TEST(window, setters_update_properties) {
     EXPECT_EQ(test_window.get_cursor_mode(), window::cursor_mode::hidden);
     EXPECT_EQ(test_window.get_fullscreen_mode(), window::fullscreen_mode::fullscreen);
     EXPECT_EQ(test_window.get_state(), window::window_display_state::iconified);
+}
+
+TEST(window, close_uses_derived_window_implementation) {
+    test_window test_window("Main", core::extent<int32_t>{640, 480});
+
+    window& base_window = test_window;
+    base_window.close();
+
+    EXPECT_TRUE(test_window.is_closed());
 }
 
 } // namespace tst::application

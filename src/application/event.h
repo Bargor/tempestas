@@ -63,6 +63,7 @@ struct event {
     using payload =
         std::variant<mouse_position, mouse_button, scroll, keyboard, iconify, focus, framebuffer_size, closed, visibility, cursor_mode, time>;
 
+    // The object that created the event. Matching subscribers are skipped during dispatch.
     const void* source{};
 #if defined(__clang__) && __clang_major__ == 21
     // Clang 21 incorrectly rejects the variant default constructor for a nested first alternative while event is
@@ -71,6 +72,8 @@ struct event {
 #else
     payload data{};
 #endif
+    // Assigned by event_processor when the event is queued. Zero means not queued.
+    uint64_t event_id{};
 };
 
 static_assert(std::is_default_constructible_v<event>, "event must be default-constructible");

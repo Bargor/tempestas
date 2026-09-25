@@ -10,7 +10,7 @@ namespace tst::application {
 
 class main_window final : public glfw_window {
 public:
-    explicit main_window(const device::monitor& monitor) noexcept;
+    main_window(const device::monitor& monitor, event_processor<event>& events) noexcept;
 };
 
 } // namespace tst::application

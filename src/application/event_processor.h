@@ -23,6 +23,8 @@ concept processable_event = std::default_initializable<Event> && std::is_trivial
         typename Event::payload;
         requires core::is_variant_v<typename Event::payload>;
         requires std::same_as<std::remove_cvref_t<decltype(value.data)>, typename Event::payload>;
+        requires std::same_as<std::remove_cvref_t<decltype(value.event_id)>, uint64_t>;
+        requires std::same_as<std::remove_cvref_t<decltype(value.source)>, const void*>;
     };
 
 template<processable_event Event>
@@ -35,12 +37,15 @@ public:
 
     // Calling subscribe from an event callback is prohibited because processing iterates subscription vectors directly.
     template<typename EventSubtype>
-    subscription_id subscribe(std::function<void(const Event&)> callback, duration update_frequency = duration::zero());
+    subscription_id subscribe(const void* subscriber,
+                              std::function<void(const EventSubtype&)> callback,
+                              duration update_frequency);
 
     [[nodiscard]] bool unsubscribe(subscription_id id);
 
     // Calling create_event from an event callback is prohibited because it mutates the queue being processed.
-    [[nodiscard]] bool create_event(const Event& event);
+    template<typename EventSubtype, typename Source>
+    [[nodiscard]] bool create_event(const EventSubtype& payload, Source* source);
 
     void process_events();
     void process_events(duration elapsed_time);
@@ -48,6 +53,7 @@ public:
 private:
     struct subscription {
         std::function<void(const Event&)> callback{};
+        const void* subscriber{};
         duration update_frequency{};
         duration last_update_time{};
         bool active{true};
@@ -62,14 +68,15 @@ private:
     std::array<std::vector<subscription>, event_type_count> m_subscriptions{};
     size_t m_read_index{};
     size_t m_write_index{};
+    uint64_t m_next_event_id{1};
     duration m_current_time{};
     std::chrono::steady_clock::time_point m_last_process_time{std::chrono::steady_clock::now()};
 };
 
 template<processable_event Event>
 template<typename EventSubtype>
-typename event_processor<Event>::subscription_id
-event_processor<Event>::subscribe(std::function<void(const Event&)> callback, duration update_frequency) {
+typename event_processor<Event>::subscription_id event_processor<Event>::subscribe(
+    const void* subscriber, std::function<void(const EventSubtype&)> callback, duration update_frequency) {
     constexpr size_t subtype_index = core::variant_index<EventSubtype, typename Event::payload>();
 
     auto& subscriptions = m_subscriptions[subtype_index];
@@ -77,7 +84,13 @@ event_processor<Event>::subscribe(std::function<void(const Event&)> callback, du
     // unsubscribe reverses this using modulo and division by event_type_count; slots are never erased.
     const subscription_id id = static_cast<subscription_id>(subtype_index + subscriptions.size() * event_type_count);
     subscriptions.push_back(subscription{
-        .callback = std::move(callback),
+        .callback =
+            [callback = std::move(callback)](const Event& event) {
+                const auto* payload = std::get_if<EventSubtype>(&event.data);
+                assert(payload != nullptr);
+                callback(*payload);
+            },
+        .subscriber = subscriber,
         .update_frequency = update_frequency,
         .last_update_time = m_current_time,
     });
@@ -99,13 +112,21 @@ bool event_processor<Event>::unsubscribe(subscription_id id) {
 }
 
 template<processable_event Event>
-bool event_processor<Event>::create_event(const Event& event) {
+template<typename EventSubtype, typename Source>
+bool event_processor<Event>::create_event(const EventSubtype& payload, Source* source) {
+    constexpr size_t subtype_index = core::variant_index<EventSubtype, typename Event::payload>();
+    static_assert(subtype_index < event_type_count);
+    assert(source != nullptr);
+
     const size_t next_write_index = (m_write_index + 1) & (queue_capacity - 1);
     if (next_write_index == m_read_index) {
         return false;
     }
 
-    m_event_queue[m_write_index] = event;
+    const Event queued_event{.source = source, .data = payload, .event_id = m_next_event_id++};
+    if (m_next_event_id == 0) m_next_event_id = 1;
+
+    m_event_queue[m_write_index] = queued_event;
     m_write_index = next_write_index;
     return true;
 }
@@ -133,7 +154,8 @@ void event_processor<Event>::process_events(duration elapsed_time) {
         auto& subscriptions = m_subscriptions[event_type];
         for (auto& subscription : subscriptions) {
             const bool is_due = m_current_time - subscription.last_update_time >= subscription.update_frequency;
-            if (!subscription.active || !is_due) continue;
+            const bool is_source = subscription.subscriber == event.source;
+            if (!subscription.active || !is_due || is_source) continue;
 
             auto callback = subscription.callback;
             subscription.last_update_time = m_current_time;
