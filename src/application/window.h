@@ -49,25 +49,27 @@ public:
     window(window&&) = default;
     window& operator=(window&&) = default;
 
+    virtual void close() noexcept = 0;
+
     void set_name(std::string name) noexcept;
     const std::string& get_name() const noexcept;
 
-    void set_size(core::extent<int32_t> size) noexcept;
+    virtual void set_size(core::extent<int32_t> size) noexcept;
     const core::extent<int32_t>& get_size() const noexcept;
 
-    void set_visibility(visibility_mode is_visible) noexcept;
+    virtual void set_visibility(visibility_mode is_visible) noexcept;
     visibility_mode get_visibility() const noexcept;
 
-    void set_focus(focus_mode has_focus) noexcept;
+    virtual void set_focus(focus_mode has_focus) noexcept;
     focus_mode get_focus() const noexcept;
 
-    void set_cursor_mode(cursor_mode mode) noexcept;
+    virtual void set_cursor_mode(cursor_mode mode) noexcept;
     cursor_mode get_cursor_mode() const noexcept;
 
     void set_fullscreen_mode(fullscreen_mode mode) noexcept;
     fullscreen_mode get_fullscreen_mode() const noexcept;
 
-    void set_state(window_display_state window_state) noexcept;
+    virtual void set_state(window_display_state window_state) noexcept;
     window_display_state get_state() const noexcept;
 
 private:

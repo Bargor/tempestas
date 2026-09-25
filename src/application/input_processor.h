@@ -33,10 +33,11 @@ private:
     static void on_close(GLFWwindow* handle) noexcept;
     static void on_framebuffer_size(GLFWwindow* handle, int width, int height) noexcept;
 
-    void queue_event(event::payload payload) noexcept;
+    template<typename EventSubtype>
+    void queue_event(const EventSubtype& payload) noexcept;
 
     glfw_window& m_window;
-    event_processor<event>& m_events;
+    event_processor<event>& m_events_processor;
     event::mouse_position m_last_cursor_position{};
 };
 
