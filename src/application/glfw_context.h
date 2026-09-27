@@ -11,7 +11,7 @@ struct glfw_window_hint {
     int value{};
 };
 
-using glfw_context_hints = std::array<glfw_window_hint, 31>;
+using glfw_context_hints = std::array<glfw_window_hint, 30>;
 
 glfw_context_hints glfw_context() noexcept;
 

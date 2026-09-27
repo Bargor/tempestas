@@ -6,7 +6,7 @@
 
 namespace tst::application {
 
-main_window::main_window(const device::monitor& monitor) noexcept
+main_window::main_window(const device::monitor& monitor, event_processor<event>& events) noexcept
     : glfw_window("Tempestas",
                   core::extent<int32_t>{1280, 720},
                   &monitor,
@@ -15,7 +15,8 @@ main_window::main_window(const device::monitor& monitor) noexcept
                   window::cursor_mode::normal,
                   window::fullscreen_mode::windowed,
                   window::window_display_state::opened,
-                  glfw_context()) {
+                  glfw_context(),
+                  events) {
 }
 
 } // namespace tst::application

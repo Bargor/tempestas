@@ -18,8 +18,8 @@ public:
 
 private:
     program_params m_program_params;
+    event_processor<event> m_events_processor;
     main_window m_main_window;
-    event_processor<event> m_events;
     input_processor m_input_processor;
 };
 
