@@ -16,7 +16,6 @@ glfw_context_hints glfw_context() noexcept {
 
         {.target = GLFW_VISIBLE, .value = GLFW_TRUE},
         {.target = GLFW_FOCUSED, .value = GLFW_TRUE},
-        {.target = GLFW_ICONIFIED, .value = GLFW_FALSE},
         {.target = GLFW_RESIZABLE, .value = GLFW_TRUE},
         {.target = GLFW_DECORATED, .value = GLFW_TRUE},
         {.target = GLFW_AUTO_ICONIFY, .value = GLFW_TRUE},

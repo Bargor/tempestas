@@ -72,12 +72,7 @@ void input_processor::on_focus(GLFWwindow* handle, int focused) noexcept {
     assert(focused == GLFW_TRUE || focused == GLFW_FALSE);
     auto& processor = from_window(handle);
     const auto mode = focused == GLFW_TRUE ? window::focus_mode::focused : window::focus_mode::unfocused;
-    if (processor.m_window.get_focus() == mode) {
-        assert(glfwGetWindowAttrib(handle, GLFW_FOCUSED) == focused);
-        return;
-    }
-
-    processor.m_window.on_focus(mode);
+    if (processor.m_window.get_focus() != mode) processor.m_window.on_focus(mode);
 }
 
 void input_processor::on_cursor_position(GLFWwindow* handle, double x, double y) noexcept {
@@ -118,12 +113,7 @@ void input_processor::on_iconify(GLFWwindow* handle, int iconified) noexcept {
     auto& processor = from_window(handle);
     const auto state =
         iconified == GLFW_TRUE ? window::window_display_state::iconified : window::window_display_state::opened;
-    if (processor.m_window.get_state() == state) {
-        assert(glfwGetWindowAttrib(handle, GLFW_ICONIFIED) == iconified);
-        return;
-    }
-
-    processor.m_window.on_iconify(state);
+    if (processor.m_window.get_state() != state) processor.m_window.on_iconify(state);
 }
 
 void input_processor::on_close(GLFWwindow* handle) noexcept {
@@ -135,9 +125,7 @@ void input_processor::on_framebuffer_size(GLFWwindow* handle, int width, int hei
     assert(width >= 0 && height >= 0);
     auto& processor = from_window(handle);
     const core::extent<int32_t> size{width, height};
-    if (processor.m_window.get_size() == size) return;
-
-    processor.m_window.on_framebuffer_size(size);
+    if (processor.m_window.get_size() != size) processor.m_window.on_framebuffer_size(size);
 }
 
 template<typename EventSubtype>

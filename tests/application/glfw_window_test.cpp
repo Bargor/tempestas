@@ -66,6 +66,10 @@ TEST(glfw_window, creates_window_in_windowed_mode_without_monitor) {
     EXPECT_EQ(test_window.get_visibility(), window::visibility_mode::hidden);
     EXPECT_EQ(test_window.get_focus(), window::focus_mode::unfocused);
     EXPECT_EQ(test_window.get_state(), window::window_display_state::opened);
+    EXPECT_EQ(glfwGetWindowAttrib(test_window.get_handle(), GLFW_VISIBLE), GLFW_FALSE);
+    EXPECT_EQ(glfwGetWindowAttrib(test_window.get_handle(), GLFW_FOCUSED), GLFW_FALSE);
+    EXPECT_EQ(glfwGetWindowAttrib(test_window.get_handle(), GLFW_ICONIFIED), GLFW_FALSE);
+    EXPECT_EQ(glfwGetWindowAttrib(test_window.get_handle(), GLFW_MAXIMIZED), GLFW_FALSE);
 }
 
 TEST(glfw_window, externally_sourced_events_update_internal_state) {
@@ -107,12 +111,6 @@ TEST(glfw_window, window_api_notifies_listeners_and_updates_glfw_state) {
     glfw_guard glfw;
     if (!glfw.initialized()) GTEST_SKIP() << "GLFW initialization failed";
 
-    auto hints = glfw_context();
-    for (auto& hint : hints) {
-        if (hint.target == GLFW_VISIBLE || hint.target == GLFW_FOCUSED || hint.target == GLFW_FOCUS_ON_SHOW)
-            hint.value = GLFW_FALSE;
-    }
-
     event_processor<event> events;
     glfw_window test_window("GLFW test",
                             core::extent<int32_t>{800, 600},
@@ -122,7 +120,7 @@ TEST(glfw_window, window_api_notifies_listeners_and_updates_glfw_state) {
                             window::cursor_mode::normal,
                             window::fullscreen_mode::windowed,
                             window::window_display_state::opened,
-                            hints,
+                            glfw_context(),
                             events);
     input_processor input(test_window, events);
     std::vector<int> received;

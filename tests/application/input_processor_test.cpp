@@ -183,7 +183,7 @@ TEST(input_processor, glfw_callbacks_queue_matching_events) {
     EXPECT_EQ(glfwSetWindowFocusCallback(test_window.get_handle(), nullptr), nullptr);
 }
 
-TEST(input_processor, process_events_polls_and_dispatches_queued_events) {
+TEST(input_processor, event_dispatch_is_separate_from_glfw_polling) {
     glfw_guard glfw;
     if (!glfw.initialized()) GTEST_SKIP() << "GLFW initialization failed";
 
@@ -205,6 +205,9 @@ TEST(input_processor, process_events_polls_and_dispatches_queued_events) {
 
     ASSERT_TRUE(events.create_event(event::closed{}, &test_window));
     input.process_events();
+    EXPECT_EQ(close_count, 0);
+
+    events.process_events(event_processor<event>::duration::zero());
 
     EXPECT_EQ(close_count, 1);
 }

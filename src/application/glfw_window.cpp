@@ -26,6 +26,10 @@ glfw_window::glfw_window(std::string name,
     for (const auto& hint : context_hints) {
         glfwWindowHint(hint.target, hint.value);
     }
+    glfwWindowHint(GLFW_VISIBLE, is_visible == visibility_mode::visible ? GLFW_TRUE : GLFW_FALSE);
+    glfwWindowHint(GLFW_FOCUSED, has_focus == focus_mode::focused ? GLFW_TRUE : GLFW_FALSE);
+    glfwWindowHint(GLFW_FOCUS_ON_SHOW, has_focus == focus_mode::focused ? GLFW_TRUE : GLFW_FALSE);
+    glfwWindowHint(GLFW_MAXIMIZED, window_state == window_display_state::maximized ? GLFW_TRUE : GLFW_FALSE);
 
     // GLFW expects a monitor handle only when creating a fullscreen window.
     const auto get_glfw_monitor = [this]() noexcept -> GLFWmonitor* {
