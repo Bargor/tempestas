@@ -60,7 +60,6 @@ input_processor::~input_processor() {
 
 void input_processor::process_events() {
     glfwPollEvents();
-    m_events_processor.process_events();
 }
 
 input_processor& input_processor::from_window(GLFWwindow* handle) noexcept {

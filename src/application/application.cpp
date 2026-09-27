@@ -13,6 +13,7 @@ application::application(program_params params, const device::monitor& monitor) 
 void application::run() noexcept {
     while (glfwWindowShouldClose(m_main_window.get_handle()) == GLFW_FALSE) {
         m_input_processor.process_events();
+        m_events_processor.process_events();
     }
 }
 
