@@ -1,5 +1,6 @@
 set(APPLICATION_TEST_SOURCES
     application_test.cpp
+    arg_parser_test.cpp
     event_processor_test.cpp
     input_processor_test.cpp
     window_test.cpp
