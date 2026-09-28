@@ -65,9 +65,9 @@ struct event {
 
     // The object that created the event. Matching subscribers are skipped during dispatch.
     const void* source{};
-#if defined(__clang__) && __clang_major__ == 21
-    // Clang 21 incorrectly rejects the variant default constructor for a nested first alternative while event is
-    // incomplete.
+#if defined(__clang__) && __clang_major__ >= 21 && __clang_major__ <= 23
+    // Clang 21 through 23 incorrectly reject the variant default constructor for a nested first alternative while
+    // event is incomplete.
     payload data{mouse_position{}};
 #else
     payload data{};
