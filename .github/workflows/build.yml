@@ -54,8 +54,8 @@ jobs:
       fail-fast: false
       matrix:
         compiler:
-          - { cxx: clang++-21, cc: clang-21 }
-          - { cxx: g++-15, cc: gcc-15 }
+          - { cxx: clang++-23, cc: clang-23 }
+          - { cxx: g++-16, cc: gcc-16 }
         config:
           - { name: Release, type: Release }
           - { name: Debug, type: Debug }
@@ -68,20 +68,20 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install dependencies (clang-21)
-        if: matrix.compiler.cc == 'clang-21'
+      - name: Install dependencies (clang-23)
+        if: matrix.compiler.cc == 'clang-23'
         run: |
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
-          sudo ./llvm.sh 21
+          sudo ./llvm.sh 23
           rm llvm.sh
 
-      - name: Install dependencies (gcc-15)
-        if: matrix.compiler.cc == 'gcc-15'
+      - name: Install dependencies (gcc-16)
+        if: matrix.compiler.cc == 'gcc-16'
         run: |
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test
           sudo apt-get update
-          sudo apt-get install -y g++-15 gcc-15
+          sudo apt-get install -y g++-16 gcc-16
 
       - name: Install dependencies
         run: |
