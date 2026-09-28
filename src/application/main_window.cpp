@@ -2,18 +2,22 @@
 
 #include "glfw_context.h"
 
-#include <device/monitor.h>
+#include <utility>
 
 namespace tst::application {
 
-main_window::main_window(const device::monitor& monitor, event_processor<event>& events) noexcept
-    : glfw_window("Tempestas",
-                  core::extent<int32_t>{1280, 720},
+main_window::main_window(std::string name,
+                         const core::extent<int32_t> size,
+                         const device::monitor& monitor,
+                         const fullscreen_mode fullscreen,
+                         event_processor<event>& events) noexcept
+    : glfw_window(std::move(name),
+                  size,
                   &monitor,
                   window::visibility_mode::visible,
                   window::focus_mode::focused,
                   window::cursor_mode::normal,
-                  window::fullscreen_mode::windowed,
+                  fullscreen,
                   window::window_display_state::opened,
                   glfw_context(),
                   events) {
