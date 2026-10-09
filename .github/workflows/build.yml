@@ -47,6 +47,54 @@ jobs:
             exit 1
           fi
 
+  tidy-check:
+    name: Clang-Tidy Check
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install clang-tidy and dependencies
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 23
+          rm llvm.sh
+          sudo apt-get update
+          sudo apt-get install -y clang-tidy-23 ninja-build wayland-protocols libwayland-dev libxkbcommon-dev libx11-dev xorg-dev
+
+      - name: Check clang-tidy version
+        run: clang-tidy-23 --version
+
+      - name: Download Vulkan SDK 1.4.335.0
+        run: |
+          wget https://sdk.lunarg.com/sdk/download/1.4.335.0/linux/vulkansdk-linux-x86_64-1.4.335.0.tar.xz
+          tar -xf vulkansdk-linux-x86_64-1.4.335.0.tar.xz
+
+      - name: Set Vulkan SDK env
+        run: |
+          echo "VULKAN_SDK=$PWD/1.4.335.0/x86_64" >> $GITHUB_ENV
+          echo "PATH=$PWD/1.4.335.0/x86_64/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Configure CMake compilation database
+        env:
+          CC: clang-23
+          CXX: clang++-23
+        run: cmake -S . -B build-tidy -G Ninja -DCMAKE_BUILD_TYPE=Debug -DTST_ENABLE_TESTS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: Verify clang-tidy configuration
+        run: clang-tidy-23 --verify-config --config-file=.clang-tidy
+
+      - name: Run clang-tidy
+        run: |
+          run-clang-tidy-23 -p build-tidy \
+            -clang-tidy-binary clang-tidy-23 \
+            -header-filter="^$PWD/(src|tests)/" \
+            -warnings-as-errors='*' \
+            "^$PWD/(src|tests)/"
+
   build-linux:
     name: Build on Linux
     runs-on: ubuntu-24.04
