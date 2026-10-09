@@ -21,3 +21,11 @@
 - After every change to any C++ source or header file (`.c`, `.cc`, `.cpp`, `.h`, `.hh`, `.hpp`), run formatting on each changed file before finishing:
   - `./clang-format -i <changed-file>`
 - This rule is mandatory for all code changes, including tests.
+
+## Mandatory Clang-Tidy Rule
+
+- After every change to any C++ source or header file (`.c`, `.cc`, `.cpp`, `.h`, `.hh`, `.hpp`), run clang-tidy on each changed file after formatting and before finishing:
+  - `./clang-tidy <changed-file> -p <build-directory>`
+- Use the repository's `.clang-tidy` configuration and a build directory containing `compile_commands.json`. For headers, supply the compilation flags from a source file that includes the header if the compilation database has no header entry.
+- Fix diagnostics reported for changed code and rerun formatting and clang-tidy after any fixes.
+- This rule is mandatory for all code changes, including tests.
