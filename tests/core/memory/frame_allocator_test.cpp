@@ -98,7 +98,10 @@ TEST(frame_allocator, exhaustion_terminates) {
     EXPECT_DEATH(
         {
             frame_allocator resource(64);
-            (void)resource.allocate(static_cast<std::size_t>(-1));
+            // Keep the boundary value runtime-dependent so GCC does not reject
+            // the deliberate oversized request with -Walloc-size-larger-than.
+            const volatile std::size_t oversized_bytes = static_cast<std::size_t>(-1);
+            (void)resource.allocate(oversized_bytes);
         },
         "");
 }
