@@ -15,7 +15,7 @@
 #endif
 
 namespace tst {
-TST_INLINE void _assert(const char* expression, const char* file, int line) {
+TST_INLINE void assert_failed(const char* expression, const char* file, int line) {
     fprintf(stderr, "Assertion '%s' failed, file '%s' line '%d'.", expression, file, line);
     debugBreak();
 }
@@ -25,7 +25,7 @@ TST_INLINE void _assert(const char* expression, const char* file, int line) {
 #ifdef NDEBUG
 #define assert(EXPRESSION) ((void)0)
 #else
-#define assert(EXPRESSION) ((EXPRESSION) ? (void)0 : tst::_assert(#EXPRESSION, __FILE__, __LINE__))
+#define assert(EXPRESSION) ((EXPRESSION) ? (void)0 : tst::assert_failed(#EXPRESSION, __FILE__, __LINE__))
 #endif
 
 } // namespace tst

@@ -82,7 +82,7 @@ jobs:
         env:
           CC: clang-23
           CXX: clang++-23
-        run: cmake -S . -B build-tidy -G Ninja -DCMAKE_BUILD_TYPE=Debug -DTST_ENABLE_TESTS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        run: cmake -S . -B build-tidy -G Ninja -DCMAKE_BUILD_TYPE=Debug -DTST_ENABLE_TESTS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_SCAN_FOR_MODULES=OFF
 
       - name: Verify clang-tidy configuration
         run: clang-tidy-23 --verify-config --config-file=.clang-tidy
