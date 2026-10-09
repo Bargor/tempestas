@@ -2,6 +2,7 @@ set(CORE_HEADERS
     assert.h
     container/queue.h
     core.h
+    memory/frame_allocator.h
     platform.h
     position.h
     rectangle.h
