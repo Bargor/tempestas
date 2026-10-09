@@ -5,17 +5,15 @@ else()
     cmake_minimum_required(VERSION 3.30)
 endif()
 
-project(tempestas VERSION 1.0.0 LANGUAGES CXX)
-
-# The project version number.
-set(VERSION_MAJOR   0   CACHE STRING "Project major version number.")
-set(VERSION_MINOR   0   CACHE STRING "Project minor version number.")
-set(VERSION_PATCH   1   CACHE STRING "Project patch version number.")
+project(tempestas VERSION 0.0.2 LANGUAGES CXX)
 
 #Get build number
-execute_process(COMMAND git -C ${CMAKE_SOURCE_DIR} rev-parse --short HEAD OUTPUT_VARIABLE VERSION_REVISION)
+execute_process(COMMAND git -C "${PROJECT_SOURCE_DIR}" rev-parse --short HEAD
+    OUTPUT_VARIABLE VERSION_REVISION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
 
-message(${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}:${VERSION_REVISION})
+message(STATUS "${PROJECT_VERSION}:${VERSION_REVISION}")
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 23)
