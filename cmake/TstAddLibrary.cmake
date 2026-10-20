@@ -33,6 +33,13 @@ function(tst_add_library NAME HEADERS SOURCES)
         FILES ${SOURCES}
     )
 
+    # Cmake file
+    source_group(
+        TREE ${CMAKE_CURRENT_SOURCE_DIR}
+        PREFIX "CMake"
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}\\CMakeLists.txt
+    )
+
     target_compile_options(${NAME} PRIVATE "$<$<CONFIG:Debug>:${TST_DEBUG_COMPILE_OPTIONS}>")
     target_compile_options(${NAME} PRIVATE "$<$<CONFIG:Release>:${TST_RELEASE_COMPILE_OPTIONS}>")
     target_compile_options(${NAME} PRIVATE "$<$<CONFIG:RelWithDebInfo>:${TST_RELWITHDEBINFO_COMPILE_OPTIONS}>")
@@ -78,6 +85,13 @@ function(tst_add_executable NAME HEADERS SOURCES)
         TREE ${CMAKE_CURRENT_SOURCE_DIR}
         PREFIX "Source Files"
         FILES ${SOURCES}
+    )
+
+    # Cmake file
+    source_group(
+        TREE ${CMAKE_CURRENT_SOURCE_DIR}
+        PREFIX "CMake"
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}\\CMakeLists.txt
     )
 
     # Compile options

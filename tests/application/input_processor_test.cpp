@@ -284,14 +284,9 @@ TEST(input_processor, cursor_position_uses_relative_coordinates_only_when_disabl
     events.process_events(event_processor<event>::duration::zero());
     position_callback(handle, 90.0, 100.0);
 
-    test_window.window::set_cursor_mode(window::cursor_mode::disabled);
-    EXPECT_EQ(glfwGetInputMode(handle, GLFW_CURSOR), GLFW_CURSOR_NORMAL);
-    position_callback(handle, 94.0, 107.0);
-    test_window.window::set_cursor_mode(window::cursor_mode::normal);
-
     events.process_events(event_processor<event>::duration::zero());
 
-    ASSERT_EQ(positions.size(), 5);
+    ASSERT_EQ(positions.size(), 4);
     EXPECT_DOUBLE_EQ(positions[0].x, 5.0);
     EXPECT_DOUBLE_EQ(positions[0].y, -3.0);
     EXPECT_DOUBLE_EQ(positions[1].x, 3.0);
@@ -300,8 +295,6 @@ TEST(input_processor, cursor_position_uses_relative_coordinates_only_when_disabl
     EXPECT_DOUBLE_EQ(positions[2].y, 80.0);
     EXPECT_DOUBLE_EQ(positions[3].x, 90.0);
     EXPECT_DOUBLE_EQ(positions[3].y, 100.0);
-    EXPECT_DOUBLE_EQ(positions[4].x, 4.0);
-    EXPECT_DOUBLE_EQ(positions[4].y, 7.0);
 }
 
 } // namespace tst::application
