@@ -60,10 +60,6 @@ window::cursor_mode window::get_cursor_mode() const noexcept {
     return m_cursor_mode;
 }
 
-void window::set_fullscreen_mode(window::fullscreen_mode mode) noexcept {
-    m_fullscreen_mode = mode;
-}
-
 window::fullscreen_mode window::get_fullscreen_mode() const noexcept {
     return m_fullscreen_mode;
 }

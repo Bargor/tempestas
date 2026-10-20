@@ -35,6 +35,19 @@ public:
         maximized,
     };
 
+    virtual void close() noexcept = 0;
+
+    const std::string& get_name() const noexcept;
+
+    const core::extent<int32_t>& get_size() const noexcept;
+
+    visibility_mode get_visibility() const noexcept;
+    focus_mode get_focus() const noexcept;
+    cursor_mode get_cursor_mode() const noexcept;
+    fullscreen_mode get_fullscreen_mode() const noexcept;
+    window_display_state get_state() const noexcept;
+
+protected:
     window(std::string name,
            core::extent<int32_t> size,
            visibility_mode is_visible = visibility_mode::visible,
@@ -49,31 +62,16 @@ public:
     window(window&&) = default;
     window& operator=(window&&) = default;
 
-    virtual void close() noexcept = 0;
+    virtual void set_name(std::string name) noexcept;
+    virtual void set_size(core::extent<int32_t> size) noexcept = 0;
+    virtual void set_visibility(visibility_mode is_visible) noexcept = 0;
+    virtual void set_focus(focus_mode has_focus) noexcept = 0;
+    virtual void set_cursor_mode(cursor_mode mode) noexcept = 0;
+    virtual void set_state(window_display_state window_state) noexcept = 0;
 
-    void set_name(std::string name) noexcept;
-    const std::string& get_name() const noexcept;
-
-    virtual void set_size(core::extent<int32_t> size) noexcept;
-    const core::extent<int32_t>& get_size() const noexcept;
-
-    virtual void set_visibility(visibility_mode is_visible) noexcept;
-    visibility_mode get_visibility() const noexcept;
-
-    virtual void set_focus(focus_mode has_focus) noexcept;
-    focus_mode get_focus() const noexcept;
-
-    virtual void set_cursor_mode(cursor_mode mode) noexcept;
-    cursor_mode get_cursor_mode() const noexcept;
-
-    void set_fullscreen_mode(fullscreen_mode mode) noexcept;
-    fullscreen_mode get_fullscreen_mode() const noexcept;
-
-    virtual void set_state(window_display_state window_state) noexcept;
-    window_display_state get_state() const noexcept;
-
-private:
+protected:
     std::string m_name;
+
     core::extent<int32_t> m_size{};
     visibility_mode m_is_visible{visibility_mode::visible};
     focus_mode m_has_focus{focus_mode::focused};

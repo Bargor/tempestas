@@ -3,7 +3,6 @@ set(APPLICATION_TEST_SOURCES
     arg_parser_test.cpp
     event_processor_test.cpp
     input_processor_test.cpp
-    window_test.cpp
     glfw_window_test.cpp
 )
 

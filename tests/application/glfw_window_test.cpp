@@ -39,6 +39,74 @@ namespace {
     };
 } // namespace
 
+TEST(glfw_window, constructor_assigns_all_properties) {
+    glfw_guard glfw;
+    if (!glfw.initialized()) {
+        GTEST_SKIP()
+            << "GLFW initialization failed in test environment. error_code=" << glfw.error_code()
+            << " description=" << (glfw.error_description() != nullptr ? glfw.error_description() : "no description");
+    }
+
+    const auto hints = glfw_context();
+    event_processor<event> events;
+
+    glfw_window test_window("Main",
+                            core::extent<int32_t>{1280, 720},
+                            nullptr,
+                            window::visibility_mode::hidden,
+                            window::focus_mode::unfocused,
+                            window::cursor_mode::disabled,
+                            window::fullscreen_mode::windowed,
+                            window::window_display_state::maximized,
+                            hints,
+                            events);
+
+    EXPECT_EQ(test_window.get_name(), "Main");
+    EXPECT_EQ(test_window.get_size(), (core::extent<int32_t>{1280, 720}));
+    EXPECT_EQ(test_window.get_visibility(), window::visibility_mode::hidden);
+    EXPECT_EQ(test_window.get_focus(), window::focus_mode::unfocused);
+    EXPECT_EQ(test_window.get_cursor_mode(), window::cursor_mode::disabled);
+    EXPECT_EQ(test_window.get_fullscreen_mode(), window::fullscreen_mode::windowed);
+    EXPECT_EQ(test_window.get_state(), window::window_display_state::maximized);
+}
+
+TEST(glfw_window, setters_update_properties) {
+    glfw_guard glfw;
+    if (!glfw.initialized()) {
+        GTEST_SKIP()
+            << "GLFW initialization failed in test environment. error_code=" << glfw.error_code()
+            << " description=" << (glfw.error_description() != nullptr ? glfw.error_description() : "no description");
+    }
+
+    const auto hints = glfw_context();
+    event_processor<event> events;
+
+    glfw_window test_window("Main",
+                            core::extent<int32_t>{1280, 720},
+                            nullptr,
+                            window::visibility_mode::hidden,
+                            window::focus_mode::unfocused,
+                            window::cursor_mode::disabled,
+                            window::fullscreen_mode::windowed,
+                            window::window_display_state::maximized,
+                            hints,
+                            events);
+
+    test_window.set_size({1920, 1080});
+    test_window.set_visibility(window::visibility_mode::visible);
+    test_window.set_focus(window::focus_mode::focused);
+    test_window.set_cursor_mode(window::cursor_mode::normal);
+    test_window.set_state(window::window_display_state::iconified);
+
+    EXPECT_EQ(test_window.get_name(), "Main");
+    EXPECT_EQ(test_window.get_size(), (core::extent<int32_t>{1920, 1080}));
+    EXPECT_EQ(test_window.get_visibility(), window::visibility_mode::visible);
+    EXPECT_EQ(test_window.get_focus(), window::focus_mode::focused);
+    EXPECT_EQ(test_window.get_cursor_mode(), window::cursor_mode::normal);
+    EXPECT_EQ(test_window.get_fullscreen_mode(), window::fullscreen_mode::windowed);
+    EXPECT_EQ(test_window.get_state(), window::window_display_state::iconified);
+}
+
 TEST(glfw_window, creates_window_in_windowed_mode_without_monitor) {
     glfw_guard glfw;
     if (!glfw.initialized()) {
@@ -74,7 +142,11 @@ TEST(glfw_window, creates_window_in_windowed_mode_without_monitor) {
 
 TEST(glfw_window, externally_sourced_events_update_internal_state) {
     glfw_guard glfw;
-    if (!glfw.initialized()) GTEST_SKIP() << "GLFW initialization failed";
+    if (!glfw.initialized()) {
+        GTEST_SKIP()
+            << "GLFW initialization failed in test environment. error_code=" << glfw.error_code()
+            << " description=" << (glfw.error_description() != nullptr ? glfw.error_description() : "no description");
+    }
 
     event_processor<event> events;
     glfw_window test_window("GLFW test",
@@ -109,7 +181,11 @@ TEST(glfw_window, externally_sourced_events_update_internal_state) {
 
 TEST(glfw_window, window_api_notifies_listeners_and_updates_glfw_state) {
     glfw_guard glfw;
-    if (!glfw.initialized()) GTEST_SKIP() << "GLFW initialization failed";
+    if (!glfw.initialized()) {
+        GTEST_SKIP()
+            << "GLFW initialization failed in test environment. error_code=" << glfw.error_code()
+            << " description=" << (glfw.error_description() != nullptr ? glfw.error_description() : "no description");
+    }
 
     event_processor<event> events;
     glfw_window test_window("GLFW test",
@@ -156,31 +232,30 @@ TEST(glfw_window, window_api_notifies_listeners_and_updates_glfw_state) {
     events.subscribe<event::closed>(
         nullptr, [&received](const event::closed&) { received.push_back(4); }, update_frequency);
 
-    window& window_api = test_window;
-    window_api.set_size({900, 700});
+    test_window.set_size({900, 700});
     auto framebuffer_size_callback = glfwSetFramebufferSizeCallback(test_window.get_handle(), nullptr);
     ASSERT_NE(framebuffer_size_callback, nullptr);
     glfwSetFramebufferSizeCallback(test_window.get_handle(), framebuffer_size_callback);
     framebuffer_size_callback(test_window.get_handle(), 900, 700);
     events.process_events(event_processor<event>::duration::zero());
 
-    window_api.set_visibility(window::visibility_mode::visible);
+    test_window.set_visibility(window::visibility_mode::visible);
     EXPECT_EQ(glfwGetWindowAttrib(test_window.get_handle(), GLFW_VISIBLE), GLFW_TRUE);
     EXPECT_EQ(test_window.get_visibility(), window::visibility_mode::visible);
     events.process_events(event_processor<event>::duration::zero());
 
-    window_api.set_focus(window::focus_mode::focused);
+    test_window.set_focus(window::focus_mode::focused);
     auto focus_callback = glfwSetWindowFocusCallback(test_window.get_handle(), nullptr);
     ASSERT_NE(focus_callback, nullptr);
     glfwSetWindowFocusCallback(test_window.get_handle(), focus_callback);
     focus_callback(test_window.get_handle(), GLFW_TRUE);
     events.process_events(event_processor<event>::duration::zero());
 
-    window_api.set_cursor_mode(window::cursor_mode::hidden);
+    test_window.set_cursor_mode(window::cursor_mode::hidden);
     EXPECT_EQ(glfwGetInputMode(test_window.get_handle(), GLFW_CURSOR), GLFW_CURSOR_HIDDEN);
     events.process_events(event_processor<event>::duration::zero());
 
-    window_api.close();
+    test_window.close();
     EXPECT_EQ(glfwWindowShouldClose(test_window.get_handle()), GLFW_TRUE);
     events.process_events(event_processor<event>::duration::zero());
 
