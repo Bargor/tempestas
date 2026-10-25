@@ -1,5 +1,6 @@
 #pragma once
 
+#include "assert.h"
 #include "entity.h"
 
 #include <type_traits>
@@ -17,14 +18,14 @@ class sparse_set {
 public:
     sparse_set() = default;
 
-    bool contains(entity_id id) const;
+    bool contains(entity e) const;
 
     template<typename... Args>
-    Component& emplace(entity_id id, Args&&... args);
-    Component& emplace(entity_id id, Component&& component);
-    Component* get(entity_id id);
-    const Component* get(entity_id id) const;
-    bool erase(entity_id id);
+    Component& emplace(entity e, Args&&... args);
+    Component& emplace(entity e, Component&& component);
+    Component* get(entity e);
+    const Component* get(entity e) const;
+    bool erase(entity e);
     size_t size() const {
         return components.size();
     }
@@ -33,96 +34,100 @@ private:
     static constexpr size_t npos = std::numeric_limits<size_t>::max();
 
     std::vector<Component> components;
-    std::vector<entity_id> entity_ids;
+    std::vector<entity> entities;
 
     std::vector<size_t> entity_id_to_index;
 };
 
 template<SparseSetComponent Component>
-bool sparse_set<Component>::contains(entity_id id) const {
-    if (id >= entity_id_to_index.size()) {
+bool sparse_set<Component>::contains(entity e) const {
+    if (e.id >= entity_id_to_index.size()) {
         return false;
     }
-    size_t index = entity_id_to_index[id];
-    return index != npos && index < components.size() && entity_ids[index] == id;
+    size_t index = entity_id_to_index[e.id];
+    return index != npos && index < components.size() && entities[index] == e;
 }
 
 template<SparseSetComponent Component>
 template<typename... Args>
-Component& sparse_set<Component>::emplace(entity_id id, Args&&... args) {
-    if (contains(id)) {
-        return components[entity_id_to_index[id]];
+Component& sparse_set<Component>::emplace(entity e, Args&&... args) {
+    if (contains(e)) {
+        return components[entity_id_to_index[e.id]];
     }
 
-    if (id >= entity_id_to_index.size()) {
-        entity_id_to_index.resize(id + 1, npos);
+    if (e.id >= entity_id_to_index.size()) {
+        entity_id_to_index.resize(e.id + 1, npos);
     }
-    size_t index = components.size();
+    assert(entity_id_to_index[e.id] == npos);
+
+    const size_t index = components.size();
 
     // TODO: Use custom allocator to ensure it doesn't throw
     components.emplace_back(std::forward<Args>(args)...);
-    entity_ids.push_back(id);
-    entity_id_to_index[id] = index;
+    entities.push_back(e);
+    entity_id_to_index[e.id] = index;
     return components.back();
 }
 
 template<SparseSetComponent Component>
-Component& sparse_set<Component>::emplace(entity_id id, Component&& component) {
-    if (contains(id)) {
-        return components[entity_id_to_index[id]];
+Component& sparse_set<Component>::emplace(entity e, Component&& component) {
+    if (contains(e)) {
+        return components[entity_id_to_index[e.id]];
     }
 
-    if (id >= entity_id_to_index.size()) {
-        entity_id_to_index.resize(id + 1, npos);
+    if (e.id >= entity_id_to_index.size()) {
+        entity_id_to_index.resize(e.id + 1, npos);
     }
-    size_t index = components.size();
+    assert(entity_id_to_index[e.id] == npos);
+
+    const size_t index = components.size();
 
     // TODO: Use custom allocator to ensure it doesn't throw
     components.push_back(std::forward<Component>(component));
-    entity_ids.push_back(id);
-    entity_id_to_index[id] = index;
+    entities.push_back(e);
+    entity_id_to_index[e.id] = index;
     return components.back();
 }
 
 template<SparseSetComponent Component>
-Component* sparse_set<Component>::get(entity_id id) {
-    if (!contains(id)) {
+Component* sparse_set<Component>::get(entity e) {
+    if (!contains(e)) {
         return nullptr;
     }
-    size_t index = entity_id_to_index[id];
+    size_t index = entity_id_to_index[e.id];
     return &components[index];
 }
 
 template<SparseSetComponent Component>
-const Component* sparse_set<Component>::get(entity_id id) const {
-    if (!contains(id)) {
+const Component* sparse_set<Component>::get(entity e) const {
+    if (!contains(e)) {
         return nullptr;
     }
-    size_t index = entity_id_to_index[id];
+    size_t index = entity_id_to_index[e.id];
     return &components[index];
 }
 
 template<SparseSetComponent Component>
-bool sparse_set<Component>::erase(entity_id id) {
-    if (!contains(id)) {
+bool sparse_set<Component>::erase(entity e) {
+    if (!contains(e)) {
         return false;
     }
-    size_t index = entity_id_to_index[id];
+    size_t index = entity_id_to_index[e.id];
     size_t last_index = components.size() - 1;
 
     if (index != last_index) {
-        const auto moved = entity_ids[last_index];
+        const auto moved = entities[last_index];
         // Update the index of the swapped entity
-        entity_id_to_index[moved] = index;
+        entity_id_to_index[moved.id] = index;
         // Swap the component to be removed with the last component
-        entity_ids[index] = moved;
+        entities[index] = moved;
         components[index] = std::move(components[last_index]);
     }
 
     // Remove the last component and entity ID
     components.pop_back();
-    entity_ids.pop_back();
-    entity_id_to_index[id] = npos;
+    entities.pop_back();
+    entity_id_to_index[e.id] = npos;
     return true;
 }
 
