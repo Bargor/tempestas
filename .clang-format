@@ -19,7 +19,7 @@ BinPackArguments: false
 BinPackParameters: false
 BraceWrapping:
 	AfterEnum: true
-BreakBeforeBinaryOperators: None
+BreakBinaryOperations: OnePerLine
 BreakBeforeBraces: Attach
 BreakBeforeInheritanceComma: false
 BreakBeforeTernaryOperators: false
