@@ -1,5 +1,6 @@
-add_subdirectory(core)
 add_subdirectory(application)
+add_subdirectory(core)
 add_subdirectory(device)
-add_subdirectory(rendering)
+add_subdirectory(ecs)
 add_subdirectory(game)
+add_subdirectory(rendering)
