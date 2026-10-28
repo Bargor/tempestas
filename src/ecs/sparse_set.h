@@ -18,15 +18,15 @@ class sparse_set {
 public:
     sparse_set() = default;
 
-    bool contains(entity e) const;
+    [[nodiscard]] bool contains(entity e) const noexcept;
 
     template<typename... Args>
     Component& emplace(entity e, Args&&... args);
     Component& emplace(entity e, Component&& component);
-    Component* get(entity e);
-    const Component* get(entity e) const;
+    Component* get(entity e) noexcept;
+    const Component* get(entity e) const noexcept;
     bool erase(entity e);
-    size_t size() const {
+    [[nodiscard]] size_t size() const noexcept{
         return components.size();
     }
 
@@ -40,7 +40,7 @@ private:
 };
 
 template<SparseSetComponent Component>
-bool sparse_set<Component>::contains(entity e) const {
+bool sparse_set<Component>::contains(entity e) const noexcept {
     if (e.id >= entity_id_to_index.size()) {
         return false;
     }
@@ -90,7 +90,7 @@ Component& sparse_set<Component>::emplace(entity e, Component&& component) {
 }
 
 template<SparseSetComponent Component>
-Component* sparse_set<Component>::get(entity e) {
+Component* sparse_set<Component>::get(entity e) noexcept {
     if (!contains(e)) {
         return nullptr;
     }
@@ -99,7 +99,7 @@ Component* sparse_set<Component>::get(entity e) {
 }
 
 template<SparseSetComponent Component>
-const Component* sparse_set<Component>::get(entity e) const {
+const Component* sparse_set<Component>::get(entity e) const noexcept {
     if (!contains(e)) {
         return nullptr;
     }
