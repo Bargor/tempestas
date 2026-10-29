@@ -1,4 +1,5 @@
 set(ECS_TEST_SOURCES
+    registry_test.cpp
     sparse_set_test.cpp
 )
 
