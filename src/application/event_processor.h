@@ -18,8 +18,10 @@
 namespace tst::application {
 
 template<typename Event>
-concept processable_event = std::default_initializable<Event> && std::is_trivially_copy_constructible_v<Event> &&
-    std::is_trivially_copy_assignable_v<Event> && requires(Event value) {
+concept processable_event = std::default_initializable<Event> &&
+    std::is_trivially_copy_constructible_v<Event> &&
+    std::is_trivially_copy_assignable_v<Event> &&
+    requires(Event value) {
         typename Event::payload;
         requires core::is_variant_v<typename Event::payload>;
         requires std::same_as<std::remove_cvref_t<decltype(value.data)>, typename Event::payload>;

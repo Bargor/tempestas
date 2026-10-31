@@ -52,6 +52,43 @@ function(tst_add_library NAME HEADERS SOURCES)
 
 endfunction()
 
+function(tst_add_interface_library NAME HEADER)
+    add_library(${NAME} INTERFACE)
+
+    add_library(tst::${NAME} ALIAS ${NAME})
+
+    target_sources(${NAME} PUBLIC ${HEADERS})
+    
+    target_include_directories(${NAME}
+    INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
+        ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
+    # Require C++ standard
+    target_compile_features(${NAME} INTERFACE cxx_std_23)
+
+    # Link warnings (your existing target)
+    target_link_libraries(${NAME}
+        INTERFACE
+            project_warnings
+    )
+
+    # Group headers
+    source_group(
+        TREE ${CMAKE_CURRENT_SOURCE_DIR}
+        PREFIX "Header Files"
+        FILES ${HEADERS}
+    )
+
+    # Cmake file
+    source_group(
+        TREE ${CMAKE_CURRENT_SOURCE_DIR}
+        PREFIX "CMake"
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}\\CMakeLists.txt
+    )
+endfunction()
+
 function(tst_add_executable NAME HEADERS SOURCES)
     add_executable(${NAME})
 

@@ -173,13 +173,14 @@ instance::instance() : m_instance(create_instance()) {
 void instance::setup_debug_messenger() {
     vk::PFN_DebugUtilsMessengerCallbackEXT cb = static_cast<vk::PFN_DebugUtilsMessengerCallbackEXT>(debug_callback);
 
-    vk::DebugUtilsMessengerCreateInfoEXT create_info(
-        {}, // flags
-        vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning | vk::DebugUtilsMessageSeverityFlagBitsEXT::eError |
-            vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose,
-        vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral | vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation |
-            vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance,
-        cb);
+    vk::DebugUtilsMessengerCreateInfoEXT create_info({}, // flags
+                                                     vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
+                                                         vk::DebugUtilsMessageSeverityFlagBitsEXT::eError |
+                                                         vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose,
+                                                     vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
+                                                         vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation |
+                                                         vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance,
+                                                     cb);
 
     auto result = vk_try(m_instance->createDebugUtilsMessengerEXTUnique(create_info));
 
