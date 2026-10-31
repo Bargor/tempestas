@@ -3,6 +3,8 @@
 #include "assert.h"
 #include "entity.h"
 
+#include <fmt/printf.h>
+#include <limits>
 #include <type_traits>
 #include <vector>
 
@@ -26,7 +28,7 @@ public:
     Component* get(entity e) noexcept;
     const Component* get(entity e) const noexcept;
     bool erase(entity e);
-    [[nodiscard]] size_t size() const noexcept{
+    [[nodiscard]] size_t size() const noexcept {
         return components.size();
     }
 
@@ -78,7 +80,10 @@ Component& sparse_set<Component>::emplace(entity e, Component&& component) {
     if (e.id >= entity_id_to_index.size()) {
         entity_id_to_index.resize(e.id + 1, npos);
     }
-    assert(entity_id_to_index[e.id] == npos);
+    if (entity_id_to_index[e.id] != npos) [[unlikely]] {
+        fmt::printf("Inserting component to ECS failed\n");
+        std::abort();
+    }
 
     const size_t index = components.size();
 

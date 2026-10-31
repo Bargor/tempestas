@@ -12,4 +12,4 @@ struct entity {
     bool operator==(const entity& other) const = default;
 };
 
-}
+} // namespace tst::ecs

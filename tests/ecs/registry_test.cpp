@@ -53,7 +53,7 @@ TEST(registry, entity_not_valid_after_destroy) {
 
 TEST(registry, entity_not_valid) {
     registry reg;
-    entity e{ .id = 1, .generation = 0};
+    entity e{.id = 1, .generation = 0};
     EXPECT_FALSE(reg.is_valid(e));
 }
 
@@ -316,13 +316,11 @@ TEST(registry, erase_component_after_reuse_entity) {
 
 TEST(registry, get_unregisted_storage) {
     registry reg;
-    entity e = reg.create_entity();
     EXPECT_DEATH(reg.get_storage<test_component>(), "");
 }
 
 TEST(registry, get_registed_storage) {
     registry reg;
-    entity e = reg.create_entity();
     reg.register_component<test_component>();
     auto& storage = reg.get_storage<test_component>();
     EXPECT_EQ(storage.size(), 0);
@@ -339,7 +337,6 @@ TEST(registry, get_storage_after_emplace) {
 
 TEST(registry, register_same_component_twice) {
     registry reg;
-    entity e = reg.create_entity();
     reg.register_component<test_component>();
     EXPECT_DEATH(reg.register_component<test_component>(), "");
 }

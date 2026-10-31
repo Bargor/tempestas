@@ -20,7 +20,7 @@ TEST(sparse_set, size_changes_after_add) {
     EXPECT_EQ(set.size(), 1);
 
     set.emplace({1, 0}, test_component{24, 2.71f});
-    EXPECT_EQ(set.size(),    2);
+    EXPECT_EQ(set.size(), 2);
 }
 
 TEST(sparse_set, emplace) {
@@ -106,7 +106,7 @@ TEST(sparse_set, get) {
 
     set.emplace({0, 0}, 42, 3.14f);
     EXPECT_EQ(set.size(), 1);
-    
+
     auto& component = *set.get({0, 0});
     EXPECT_EQ(component.int_value, 42);
     EXPECT_EQ(component.float_value, 3.14f);

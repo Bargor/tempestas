@@ -26,7 +26,7 @@ bool registry::destroy_entity(entity id) {
         return false;
     }
 
-    for (auto& [componentId, storage] : m_component_storages) {
+    for (auto& [component_id, storage] : m_component_storages) {
         storage->erase(id);
     }
 
