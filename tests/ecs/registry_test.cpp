@@ -340,3 +340,31 @@ TEST(registry, register_same_component_twice) {
     reg.register_component<test_component>();
     EXPECT_DEATH(reg.register_component<test_component>(), "");
 }
+
+TEST(registry, add_invalid_entity) {
+    registry reg;
+    entity e = reg.create_entity();
+    EXPECT_DEATH(reg.emplace<test_component>(e, test_component{42, 3.14f}), "");
+}
+
+TEST(registry, add_destroyed_entity) {
+    registry reg;
+    entity e = reg.create_entity();
+    reg.register_component<test_component>();
+    reg.emplace<test_component>(e, test_component{42, 3.14f});
+    reg.destroy_entity(e);
+    EXPECT_DEATH(reg.emplace<test_component>(e, test_component{42, 3.14f}), "");
+}
+
+TEST(registry, readd_destroyed_entity) {
+    registry reg;
+    entity e = reg.create_entity();
+    reg.register_component<test_component>();
+    reg.emplace<test_component>(e, test_component{42, 3.14f});
+    entity e2 = reg.create_entity();
+    reg.emplace<test_component>(e2, test_component{100, 6.28f});
+    reg.destroy_entity(e);
+    entity e3 = reg.create_entity();
+    EXPECT_EQ(e3.id, e.id);
+    EXPECT_GT(e3.generation, e.generation);
+}
