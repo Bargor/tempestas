@@ -30,7 +30,9 @@ application::application(program_params params, const device::monitor& monitor) 
                     monitor,
                     m_program_params.fullscreen_mode,
                     m_events_processor)
-    , m_input_processor(m_main_window, m_events_processor) {
+    , m_input_processor(m_main_window, m_events_processor)
+    , m_registry()
+    , m_pathfinder(m_registry) {
 }
 
 void application::run() noexcept {

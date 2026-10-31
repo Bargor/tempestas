@@ -6,6 +6,7 @@
 
 #include <ecs/entity.h>
 #include <ecs/sparse_set.h>
+
 #include <vector>
 
 namespace tst::pathfinder {

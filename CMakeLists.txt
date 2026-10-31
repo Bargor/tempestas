@@ -20,6 +20,9 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+include(${PROJECT_SOURCE_DIR}/cmake/TstAddLibrary.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/TstAddProjectSubdirectory.cmake)
+
 # Set build output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -32,22 +35,19 @@ option(TST_ENABLE_TESTS "Enable building tests" ON)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-add_subdirectory(third_party/glfw)
+tst_add_project_subdirectory(third_party/glfw)
 
 set(FMT_TEST OFF CACHE BOOL "" FORCE)
 set(FMT_DOC OFF CACHE BOOL "" FORCE)
-add_subdirectory(third_party/fmt)
+tst_add_project_subdirectory(third_party/fmt)
 
 find_package(Vulkan REQUIRED)
-
-include(${PROJECT_SOURCE_DIR}/cmake/TstAddLibrary.cmake)
-include(${PROJECT_SOURCE_DIR}/cmake/TstAddProjectSubdirectory.cmake)
 
 # Include project subdirectories
 tst_add_project_subdirectory(src)
 
 if(TST_ENABLE_TESTS)
     enable_testing()
-    add_subdirectory(third_party/googletest)
+    tst_add_project_subdirectory(third_party/googletest)
     tst_add_project_subdirectory(tests)
 endif()

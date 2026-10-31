@@ -3,6 +3,8 @@
 #include "arg_parser.h"
 #include "input_processor.h"
 #include "main_window.h"
+#include <ecs/registry.h>
+#include <pathfinder/pathfinder.h>
 
 namespace tst::device {
 class monitor;
@@ -21,6 +23,8 @@ private:
     event_processor<event> m_events_processor;
     main_window m_main_window;
     input_processor m_input_processor;
+    ecs::registry m_registry;
+    pathfinder::pathfinder m_pathfinder;
 };
 
 } // namespace tst::application
