@@ -1,8 +1,8 @@
 #include "input_processor.h"
 
+#include "assert.h"
 #include "glfw_window.h"
 
-#include <cassert>
 #include <cstdlib>
 #include <fmt/printf.h>
 
@@ -12,20 +12,14 @@ input_processor::input_processor(glfw_window& window, event_processor<event>& ev
     : m_window(window), m_events_processor(events) {
     GLFWwindow* handle = m_window.get_handle();
     glfwGetCursorPos(handle, &m_last_cursor_position.x, &m_last_cursor_position.y);
-    if (glfwGetWindowUserPointer(handle) != nullptr) {
-        fmt::printf("Failed to register GLFW callbacks: window user pointer is already set.\n");
-        std::abort();
-    }
+    hard_assert(glfwGetWindowUserPointer(handle) == nullptr,
+                "Failed to register GLFW callbacks: window user pointer is already set.");
     glfwGetError(nullptr);
     glfwSetWindowUserPointer(handle, this);
 
     const auto register_callback = [handle](auto setter, auto callback, const char* name) {
         const auto previous_callback = setter(handle, callback);
-        if (previous_callback != nullptr) {
-            setter(handle, previous_callback);
-            fmt::printf("Failed to register GLFW %s callback: one is already installed.\n", name);
-            std::abort();
-        }
+        hard_assert(previous_callback == nullptr, "Failed to register GLFW callback: one is already installed.");
     };
 
     register_callback(glfwSetWindowFocusCallback, on_focus, "focus");
@@ -38,11 +32,9 @@ input_processor::input_processor(glfw_window& window, event_processor<event>& ev
     register_callback(glfwSetFramebufferSizeCallback, on_framebuffer_size, "framebuffer size");
 
     const char* error_description = nullptr;
-    if (glfwGetError(&error_description) != GLFW_NO_ERROR) {
-        fmt::printf("Failed to register GLFW callbacks: %s\n",
-                    error_description != nullptr ? error_description : "unknown GLFW error");
-        std::abort();
-    }
+    hard_assert(glfwGetError(&error_description) == GLFW_NO_ERROR,
+                "Failed to register GLFW callbacks: %s\n",
+                error_description != nullptr ? error_description : "unknown GLFW error");
 }
 
 input_processor::~input_processor() {
