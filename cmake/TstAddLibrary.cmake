@@ -40,15 +40,26 @@ function(tst_add_library NAME HEADERS SOURCES)
         FILES ${CMAKE_CURRENT_SOURCE_DIR}\\CMakeLists.txt
     )
 
-    target_compile_options(${NAME} PRIVATE "$<$<CONFIG:Debug>:${TST_DEBUG_COMPILE_OPTIONS}>")
-    target_compile_options(${NAME} PRIVATE "$<$<CONFIG:Release>:${TST_RELEASE_COMPILE_OPTIONS}>")
-    target_compile_options(${NAME} PRIVATE "$<$<CONFIG:RelWithDebInfo>:${TST_RELWITHDEBINFO_COMPILE_OPTIONS}>")
+    # Compile options
+    target_compile_options(${NAME} PRIVATE
+        "$<$<CONFIG:Debug>:${TST_DEBUG_COMPILE_OPTIONS}>"
+        "$<$<CONFIG:Release>:${TST_RELEASE_COMPILE_OPTIONS}>"
+        "$<$<CONFIG:RelWithDebInfo>:${TST_RELWITHDEBINFO_COMPILE_OPTIONS}>"
+        "$<$<CXX_COMPILER_ID:MSVC>:/Zc:preprocessor>"
+    )
 
-    target_compile_definitions(${NAME} PRIVATE "$<$<CONFIG:Debug>:${TST_DEBUG_COMPILE_DEFINITIONS}>")
-    target_compile_definitions(${NAME} PRIVATE "$<$<CONFIG:Release>:${TST_RELEASE_COMPILE_DEFINITIONS}>")
-    target_compile_definitions(${NAME} PRIVATE "$<$<CONFIG:RelWithDebInfo>:${TST_RELWITHDEBINFO_COMPILE_DEFINITIONS}>")
+    # Compile definitions
+    target_compile_definitions(${NAME} PRIVATE
+        "$<$<CONFIG:Debug>:${TST_DEBUG_COMPILE_DEFINITIONS}>"
+        "$<$<CONFIG:Release>:${TST_RELEASE_COMPILE_DEFINITIONS}>"
+        "$<$<CONFIG:RelWithDebInfo>:${TST_RELWITHDEBINFO_COMPILE_DEFINITIONS}>"
+    )
 
-    target_link_options(${NAME} PRIVATE "$<$<CONFIG:Debug>:${TST_DEBUG_LINK_OPTIONS}>" "$<$<CONFIG:Release>:${TST_RELEASE_LINK_OPTIONS}>")
+    # Link options
+    target_link_options(${NAME} PRIVATE
+        "$<$<CONFIG:Debug>:${TST_DEBUG_LINK_OPTIONS}>"
+        "$<$<CONFIG:Release>:${TST_RELEASE_LINK_OPTIONS}>"
+    )
 
 endfunction()
 
@@ -136,6 +147,7 @@ function(tst_add_executable NAME HEADERS SOURCES)
         "$<$<CONFIG:Debug>:${TST_DEBUG_COMPILE_OPTIONS}>"
         "$<$<CONFIG:Release>:${TST_RELEASE_COMPILE_OPTIONS}>"
         "$<$<CONFIG:RelWithDebInfo>:${TST_RELWITHDEBINFO_COMPILE_OPTIONS}>"
+        "$<$<CXX_COMPILER_ID:MSVC>:/Zc:preprocessor>"
     )
 
     # Compile definitions

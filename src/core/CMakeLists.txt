@@ -14,3 +14,5 @@ set(CORE_HEADERS
 tst_add_interface_library(core
     "${CORE_HEADERS}"
 )
+
+target_link_libraries(core PUBLIC fmt::fmt)

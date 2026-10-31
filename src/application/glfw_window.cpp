@@ -1,6 +1,7 @@
 #include "glfw_window.h"
 
-#include <cassert>
+#include "assert.h"
+
 #include <cstdlib>
 #include <device/monitor.h>
 #include <fmt/printf.h>
@@ -34,10 +35,7 @@ glfw_window::glfw_window(std::string name,
     // GLFW expects a monitor handle only when creating a fullscreen window.
     const auto get_glfw_monitor = [this]() noexcept -> GLFWmonitor* {
         if (get_fullscreen_mode() == window::fullscreen_mode::fullscreen) {
-            if (m_monitor == nullptr) {
-                fmt::printf("Failed to create GLFW window: fullscreen mode requires a monitor.\n");
-                std::abort();
-            }
+            hard_assert(m_monitor != nullptr, "Failed to create GLFW window: fullscreen mode requires a monitor.");
             return m_monitor->get_handle();
         }
         return nullptr;

@@ -1,5 +1,7 @@
 #include "monitor.h"
 
+#include "assert.h"
+
 #include <cstdio>
 #include <cstdlib>
 
@@ -19,10 +21,7 @@ namespace {
 } // namespace
 
 monitor::monitor(GLFWmonitor* monitor) noexcept : m_monitor(monitor) {
-    if (m_monitor == nullptr) {
-        std::fprintf(stderr, "device::monitor requires a valid GLFWmonitor handle.\n");
-        std::abort();
-    }
+    hard_assert(monitor != nullptr, "device::monitor requires a valid GLFWmonitor handle.");
     refresh();
 }
 
