@@ -17,7 +17,7 @@ input_processor::input_processor(glfw_window& window, event_processor<event>& ev
     glfwGetError(nullptr);
     glfwSetWindowUserPointer(handle, this);
 
-    const auto register_callback = [handle](auto setter, auto callback, const char* name) {
+    const auto register_callback = [handle](auto setter, auto callback, const char*) {
         const auto previous_callback = setter(handle, callback);
         hard_assert(previous_callback == nullptr, "Failed to register GLFW callback: one is already installed.");
     };

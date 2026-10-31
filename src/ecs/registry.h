@@ -135,7 +135,6 @@ sparse_set<Component>& registry::get_storage() {
 
 template<SparseSetComponent Component, typename... Args>
 Component& registry::emplace(entity e, Args&&... args) {
-
     hard_assert(is_valid(e),
                 "Attempted to emplace component for invalid entity: id=%u, generation=%u\n",
                 static_cast<std::uint32_t>(e.id),
