@@ -16,4 +16,5 @@ tst_add_library(ecs
 target_link_libraries(ecs
     PUBLIC
         tst::core
+        fmt::fmt
 )

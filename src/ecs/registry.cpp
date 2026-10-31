@@ -12,6 +12,7 @@ entity registry::create_entity() {
             uint32_t index = m_free_indices.back();
             m_free_indices.pop_back();
             m_slots[index].generation++;
+            m_slots[index].occupied = true;
             return index;
         }
     }();
