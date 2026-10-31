@@ -145,10 +145,7 @@ namespace {
         // ---- Create instance ----
         auto result = vk_try(vk::createInstanceUnique(create_info));
 
-        if (!result) [[unlikely]] {
-            fmt::printf("Failed to create instance: %s\n", vk::to_string(result.error()).c_str());
-            std::abort();
-        }
+        hard_assert(result, "Failed to create Vulkan instance: %s\n", vk::to_string(result.error()).c_str());
 
         auto instance = std::move(result.value());
 

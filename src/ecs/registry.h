@@ -111,14 +111,12 @@ sparse_set<Component>& registry::register_component() {
     ComponentId component_id = get_component_id<Component>();
     auto find_it = m_component_storages.find(component_id);
 
-    if (find_it != m_component_storages.end()) {
-        fmt::printf("Component already registered: id=%s\n", core::type_name<Component>());
-        std::abort();
-    }
+    hard_assert(find_it == m_component_storages.end(),
+                "Failed to register component: component already registered: id=%s\n",
+                core::type_name<Component>());
+
     auto it = m_component_storages.emplace(component_id, std::make_unique<sparse_set_storage<Component>>());
-    if (!it.second) {
-        std::abort();
-    }
+    hard_assert(it.second, "Failed to register component: could not insert into component storage map.");
     return static_cast<sparse_set_storage<Component>*>(it.first->second.get())->set;
 }
 
@@ -128,21 +126,19 @@ sparse_set<Component>& registry::get_storage() {
 
     auto it = m_component_storages.find(component_id);
 
-    if (it == m_component_storages.end()) {
-        fmt::printf("Attempted to get storage for unregistered component: id=%s\n", core::type_name<Component>());
-        std::abort();
-    }
+    hard_assert(it != m_component_storages.end(),
+                "Attempted to get storage for unregistered component: id=%s\n",
+                core::type_name<Component>());
+
     return static_cast<sparse_set_storage<Component>*>(it->second.get())->set;
 }
 
 template<SparseSetComponent Component, typename... Args>
 Component& registry::emplace(entity e, Args&&... args) {
-    if (!is_valid(e)) {
-        fmt::printf("Attempted to emplace component for invalid entity: id=%u, generation=%u\n",
-                    static_cast<std::uint32_t>(e.id),
-                    e.generation);
-        std::abort();
-    }
+    hard_assert(is_valid(e),
+                "Attempted to emplace component for invalid entity: id=%u, generation=%u\n",
+                static_cast<std::uint32_t>(e.id),
+                e.generation);
     return get_storage<Component>().emplace(e, std::forward<Args>(args)...);
 }
 

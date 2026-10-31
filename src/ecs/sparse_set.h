@@ -80,11 +80,8 @@ Component& sparse_set<Component>::emplace(entity e, Component&& component) {
     if (e.id >= entity_id_to_index.size()) {
         entity_id_to_index.resize(e.id + 1, npos);
     }
-    if (entity_id_to_index[e.id] != npos) [[unlikely]] {
-        fmt::printf("Inserting component to ECS failed\n");
-        std::abort();
-    }
-
+    hard_assert(entity_id_to_index[e.id] == npos,
+                "Failed to insert component: entity already has a component of this type.");
     const size_t index = components.size();
 
     // TODO: Use custom allocator to ensure it doesn't throw
