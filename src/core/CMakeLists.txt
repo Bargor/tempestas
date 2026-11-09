@@ -1,11 +1,13 @@
 set(CORE_HEADERS
     assert.h
+    container/enum_array.h
     container/queue.h
     core.h
     memory/frame_allocator.h
     platform.h
     position.h
     rectangle.h
+    util/flags.h
     util/hash.h
     util/type_name.h
     util/variant.h

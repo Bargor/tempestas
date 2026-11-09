@@ -1,4 +1,5 @@
 set(CORE_TEST_SOURCES
+    container/enum_array_test.cpp
     container/queue_test.cpp
     geometry_test.cpp
     memory/frame_allocator_test.cpp
