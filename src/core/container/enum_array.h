@@ -2,6 +2,8 @@
 
 #include <array>
 #include <cstdint>
+#include <type_traits>
+#include <utility>
 
 namespace tst::core {
 
@@ -20,6 +22,13 @@ public:
     using const_iterator = typename std::array<T, N>::const_iterator;
     using reverse_iterator = typename std::array<T, N>::reverse_iterator;
     using const_reverse_iterator = typename std::array<T, N>::const_reverse_iterator;
+
+    constexpr enum_array() = default;
+
+    template<typename... Args>
+        requires(sizeof...(Args) == N) && (std::is_convertible_v<Args, T> && ...)
+    constexpr enum_array(Args&&... args) : m_array{{static_cast<T>(std::forward<Args>(args))...}} {
+    }
 
     constexpr T& operator[](E index) noexcept {
         return m_array[static_cast<size_t>(index)];
