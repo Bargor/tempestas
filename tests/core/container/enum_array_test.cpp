@@ -61,6 +61,87 @@ TEST(enum_array, indexing_returns_reference) {
     static_assert(std::is_same_v<decltype(std::as_const(array)[test_enum::first]), const int&>);
 }
 
+TEST(enum_array, at_access) {
+    test_array array{};
+
+    array.at(test_enum::second) = 42;
+
+    EXPECT_EQ(array.at(test_enum::second), 42);
+}
+
+TEST(enum_array, at_throws_on_invalid_index) {
+    test_array array{};
+
+    EXPECT_DEATH(array.at(static_cast<test_enum>(100)));
+}
+
+TEST(enum_array, const_at_access) {
+    test_array array{};
+
+    array[test_enum::first] = 42;
+
+    const test_array& constArray = array;
+
+    EXPECT_EQ(constArray.at(test_enum::first), 42);
+}
+
+TEST(enum_array, size) {
+    test_array array{};
+
+    EXPECT_EQ(array.size(), 3);
+}
+
+TEST(enum_array, MaxSize) {
+    test_array array{};
+
+    EXPECT_EQ(array.max_size(), 3);
+}
+
+TEST(enum_array, Empty) {
+    test_array array{};
+
+    EXPECT_FALSE(array.empty());
+}
+
+TEST(enum_array, zero_sized_array_is_empty) {
+    test_array array{};
+
+    EXPECT_TRUE(array.empty());
+    EXPECT_EQ(array.size(), 0);
+    EXPECT_EQ(array.max_size(), 0);
+}
+
+TEST(enum_array, front_and_back) {
+    test_array array{};
+
+    array[test_enum::first] = 10;
+    array[test_enum::third] = 30;
+
+    EXPECT_EQ(array.front(), 10);
+    EXPECT_EQ(array.back(), 30);
+}
+
+TEST(enum_array, const_front_and_back) {
+    test_array array{};
+
+    array[test_enum::first] = 10;
+    array[test_enum::third] = 30;
+
+    const test_array& constArray = array;
+
+    EXPECT_EQ(constArray.front(), 10);
+    EXPECT_EQ(constArray.back(), 30);
+}
+
+TEST(enum_array, data) {
+    test_array array{};
+
+    array[test_enum::first] = 10;
+
+    EXPECT_EQ(array.data()[0], 10);
+    EXPECT_EQ(array.data(), &array[test_enum::first]);
+}
+
 TEST(enum_array, fill_with_enum) {
     test_array array{};
 
@@ -112,7 +193,50 @@ TEST(enum_array, supports_range_based_for) {
     EXPECT_EQ(sum, 9);
 }
 
-// Const container interface
+TEST(enum_array, forward_iterators) {
+    test_array array{};
+
+    array[test_enum::first] = 1;
+    array[test_enum::second] = 2;
+    array[test_enum::third] = 3;
+
+    EXPECT_EQ(std::distance(array.begin(), array.end()), 3);
+    EXPECT_EQ(*array.cbegin(), 1);
+    EXPECT_EQ(*(array.cend() - 1), 3);
+}
+
+TEST(enum_array, const_forward_iterators) {
+    test_array array{1, 2, 3};
+
+    const test_array& constArray = array;
+
+    EXPECT_EQ(*constArray.begin(), 1);
+    EXPECT_EQ(*constArray.cbegin(), 1);
+    EXPECT_EQ(*(constArray.end() - 1), 3);
+    EXPECT_EQ(*(constArray.cend() - 1), 3);
+}
+
+TEST(enum_array, reverse_iterators) {
+    test_array array{1, 2, 3};
+
+    EXPECT_EQ(*array.rbegin(), 3);
+    EXPECT_EQ(*(array.rend() - 1), 1);
+
+    EXPECT_EQ(*array.crbegin(), 3);
+    EXPECT_EQ(*(array.crend() - 1), 1);
+}
+
+TEST(enum_array, const_reverse_iterators) {
+    test_array array{1, 2, 3};
+
+    const test_array& constArray = array;
+
+    EXPECT_EQ(*constArray.rbegin(), 3);
+    EXPECT_EQ(*constArray.crbegin(), 3);
+
+    EXPECT_EQ(*(constArray.rend() - 1), 1);
+    EXPECT_EQ(*(constArray.crend() - 1), 1);
+}
 
 TEST(enum_array, const_iterators) {
     test_array array{};
@@ -121,7 +245,7 @@ TEST(enum_array, const_iterators) {
     array[test_enum::second] = 2;
     array[test_enum::third] = 3;
 
-    const test_enum& constArray = array;
+    const test_array& constArray = array;
 
     EXPECT_EQ(std::distance(constArray.begin(), constArray.end()), 3);
 }
