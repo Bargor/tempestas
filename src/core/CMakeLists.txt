@@ -1,5 +1,6 @@
 set(CORE_HEADERS
     assert.h
+    container/enum_array.h
     container/queue.h
     core.h
     memory/frame_allocator.h
