@@ -104,7 +104,7 @@ TEST(enum_array, Empty) {
 }
 
 TEST(enum_array, zero_sized_array_is_empty) {
-    test_array<test_enum, int, 0> array{};
+    enum_array<test_enum, int, 0> array{};
 
     EXPECT_TRUE(array.empty());
     EXPECT_EQ(array.size(), 0);
