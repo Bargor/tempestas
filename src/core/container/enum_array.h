@@ -8,6 +8,7 @@ namespace tst::core {
 template<typename E, typename T, size_t N>
     requires std::is_enum_v<E>
 class enum_array {
+public:
     constexpr T& operator[](E index) noexcept {
         return m_array[static_cast<size_t>(index)];
     }
