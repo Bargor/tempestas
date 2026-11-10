@@ -1,6 +1,5 @@
-#include <core/util/flags.h>
-
 #include <compare>
+#include <core/util/flags.h>
 #include <cstdint>
 #include <gtest/gtest.h>
 #include <type_traits>
