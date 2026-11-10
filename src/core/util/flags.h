@@ -53,7 +53,7 @@ public:
         return flags<BitType>(static_cast<MaskType>(~m_mask & flag_traits<BitType>::all_flags));
     }
 
-    [[nodiscard]] constexpr flags& operator=(flags const&) noexcept = default;
+    constexpr flags& operator=(flags const&) noexcept = default;
 
     constexpr flags<BitType>& operator|=(flags<BitType> rhs) noexcept {
         m_mask |= rhs.m_mask;
