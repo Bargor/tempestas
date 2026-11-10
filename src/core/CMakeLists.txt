@@ -7,6 +7,7 @@ set(CORE_HEADERS
     platform.h
     position.h
     rectangle.h
+    util/flags.h
     util/hash.h
     util/type_name.h
     util/variant.h

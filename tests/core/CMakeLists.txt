@@ -3,6 +3,7 @@ set(CORE_TEST_SOURCES
     container/queue_test.cpp
     geometry_test.cpp
     memory/frame_allocator_test.cpp
+    util/flags_test.cpp
     util/variant_test.cpp
 )
 
