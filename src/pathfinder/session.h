@@ -1,17 +1,10 @@
 #pragma once
-<<<<<<< HEAD == == ==
-    =
-#include "encounter.h"
+
+#include "encounter/encounter.h"
 
 #include <ecs/entity.h>
-#include <vector>
-
-        namespace tst::ecs {
-    class registry;
-}
->>>>>>> a83b58d (More Pathfinder base)
-
 #include <string>
+#include <vector>
 
 namespace tst::ecs {
 class registry;

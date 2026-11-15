@@ -86,4 +86,13 @@ const turn_system::phase_data& turn_system::get_current_phase() const {
     return m_phases[m_current_index];
 }
 
+void turn_system::finish_encounter() noexcept {
+    hard_assert(m_encounter_active, "Encounter is not active");
+    m_encounter_active = false;
+    m_current_index = 0;
+    m_round = 0;
+    m_initiative_order.clear();
+    m_phases.clear();
+}
+
 } // namespace tst::pathfinder

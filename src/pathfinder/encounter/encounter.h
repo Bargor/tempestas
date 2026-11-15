@@ -1,20 +1,27 @@
 #pragma once
 
-#include "ecs/entity.h"
+#include "ecs/registry.h"
+#include "encounter/turn_system.h"
+#include "session.h"
 
 #include <vector>
 
 namespace tst::pathfinder {
 
 class encounter_system {
-    enum class encounter_state { before_start, rolling_initiative, in_progress, completed };
-
 public:
+    encounter_system(ecs::registry& registry, dice_roller& roller);
+
     void start_encounter(std::vector<ecs::entity>& entities);
-    void roll_initiative(std::vector<ecs::entity>& entities);
+    void finish_encounter();
 
 private:
-    initiative_system m_initiative_system;
+    ecs::registry& m_registry;
+    dice_roller& m_roller;
 
-    encounter_state m_state = encounter_state::before_start;
+    turn_system m_turn_system;
+
+    bool m_encounter_active{false};
 };
+
+} // namespace tst::pathfinder
