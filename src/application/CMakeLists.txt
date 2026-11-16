@@ -29,6 +29,7 @@ target_link_libraries(application
     PUBLIC
         tst::core
         tst::device
+        tst::pathfinder
         glfw
         fmt::fmt
 )
