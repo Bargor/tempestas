@@ -22,7 +22,9 @@ namespace tst::core {
 
 template<>
 struct flag_traits<test_flag> {
-    enum { all_flags = 0x07 };
+    enum {
+        all_flags = 0x07
+    };
 };
 
 } // namespace tst::core
