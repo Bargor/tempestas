@@ -11,6 +11,10 @@ enum class mouse_button : uint8_t {
     button_middle = GLFW_MOUSE_BUTTON_MIDDLE
 };
 
-enum class mouse_action : uint8_t { release = GLFW_RELEASE, press = GLFW_PRESS, repeat = GLFW_REPEAT };
+enum class mouse_action : uint8_t {
+    release = GLFW_RELEASE,
+    press = GLFW_PRESS,
+    repeat = GLFW_REPEAT
+};
 
 } // namespace tst::device

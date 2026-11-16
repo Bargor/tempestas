@@ -33,6 +33,10 @@ enum class keys : uint16_t {
     key_z = GLFW_KEY_Z
 };
 
-enum class key_action : uint8_t { release = GLFW_RELEASE, press = GLFW_PRESS, repeat = GLFW_REPEAT };
+enum class key_action : uint8_t {
+    release = GLFW_RELEASE,
+    press = GLFW_PRESS,
+    repeat = GLFW_REPEAT
+};
 
 } // namespace tst::device

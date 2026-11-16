@@ -7,9 +7,16 @@
 
 using namespace tst::core;
 
-enum class test_enum { first, second, third, count };
+enum class test_enum {
+    first,
+    second,
+    third,
+    count
+};
 
-enum class another_enum { first };
+enum class another_enum {
+    first
+};
 
 using test_array = enum_array<test_enum, int, static_cast<std::size_t>(test_enum::count)>;
 
