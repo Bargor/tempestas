@@ -1,9 +1,12 @@
-set(PATHFINDER_SOURCES 
+set(PATHFINDER_SOURCES
+    encounter/turn_system.cpp
     util/dice_roller.cpp
 )
 
 set(PATHFINDER_HEADERS
+    encounter/turn_system.h
     util/dice_roller.h
+    game_event.h
 )
 
 tst_add_library(pathfinder 
