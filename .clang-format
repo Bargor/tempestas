@@ -35,7 +35,7 @@ Cpp11BracedListStyle: true
 DerivePointerBinding: false
 FixNamespaceComments: true
 IncludeBlocks: Regroup
-IndentCaseLabels: false
+IndentCaseLabels: true
 IndentPPDirectives: None
 IndentWidth: 4
 IndentWrappedFunctionNames: false

@@ -4,6 +4,9 @@ set(PATHFINDER_SOURCES
 )
 
 set(PATHFINDER_HEADERS
+    components/common.h
+    components/npc_data.h
+    components/player_data.h
     encounter/turn_system.h
     util/dice_roller.h
     game_event.h

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "components/common.h"
 #include "game_event.h"
 #include "util/dice_roller.h"
 
@@ -15,7 +16,8 @@ enum class round_phase {
     turn_start,
     regain_resources,
     main_turn,
-    turn_end
+    turn_end,
+    enum_size,
 };
 
 struct turn_resources {
@@ -27,6 +29,7 @@ struct turn_resources {
 class turn_system {
 public:
     struct phase_data {
+        ecs::entity entity = ecs::invalid_entity;
         round_phase phase;
         size_t round;
         std::vector<game_event> events;
@@ -37,16 +40,27 @@ public:
 
     void roll_initiative(std::vector<ecs::entity>& entities);
     void next_turn();
+    const phase_data& get_current_phase() const;
 
 private:
+
+    static constexpr size_t m_default_rounds = 10;
+
+    struct initiative_data {
+        ecs::entity entity;
+        int64_t initiative;
+    };
+
     ecs::sparse_set<perception>& m_perception_set;
     dice_roller& m_roller;
 
-    std::vector<ecs::entity> m_initiative_order;
+    std::vector<initiative_data> m_initiative_order;
     std::vector<phase_data> m_phases;
 
     size_t m_round = 0;
     size_t m_current_index = 0;
+
+    bool m_encounter_active = false;
 };
 
 } // namespace tst::pathfinder

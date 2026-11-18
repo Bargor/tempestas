@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <limits>
 
 namespace tst::ecs {
 
@@ -11,5 +12,7 @@ struct entity {
     uint32_t generation;
     bool operator==(const entity& other) const = default;
 };
+
+static constexpr entity invalid_entity = {std::numeric_limits<entity_id>::max(), 0};
 
 } // namespace tst::ecs

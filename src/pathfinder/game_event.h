@@ -6,8 +6,11 @@
 namespace tst::pathfinder {
 struct game_event {
     // Define the properties of a game event
+    struct apply_damage {
+        int32_t damage;
+    };
 
-    using payload = std::variant <>;
+    using payload = std::variant <apply_damage>;
 
     payload data{};
     // Assigned by event_processor when the event is queued. Zero means not queued.
