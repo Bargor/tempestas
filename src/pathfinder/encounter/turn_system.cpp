@@ -44,6 +44,27 @@ void turn_system::roll_initiative(std::vector<ecs::entity>& entities) {
     }
 }
 
+ecs::entity turn_system::next_turn() {
+    hard_assert(m_phases[m_current_index].phase == round_phase::main_turn, "Current phase is not a main turn");
+    hard_assert(m_current_index < m_phases.size(), "Current index is out of bounds");
+
+    m_current_index++;
+
+    for (; m_phases[m_current_index].phase != round_phase::main_turn && m_current_index < m_phases.size();
+         ++m_current_index) {
+        // Skip phases until the next main turn
+        if (m_phases[m_current_index].phase == round_phase::regain_resources) {
+            // TODO: Perhaps we need kind of a resource manager thing
+        }
+    }
+
+    return m_phases[m_current_index].entity;
+}
+
+const std::vector<turn_system::initiative_data>& turn_system::get_initiative_order() const noexcept {
+    return m_initiative_order;
+}
+
 const turn_system::phase_data& turn_system::get_current_phase() const {
     return m_phases[m_current_index];
 }

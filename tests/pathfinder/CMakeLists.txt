@@ -1,5 +1,6 @@
 set(PATHFINDER_TEST_SOURCES
     dice_roller_test.cpp
+    turn_system_test.cpp
 )
 
 tst_add_executable(pathfinder_test

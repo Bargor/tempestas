@@ -35,21 +35,22 @@ public:
         std::vector<game_event> events;
     };
 
+    struct initiative_data {
+        ecs::entity entity;
+        int32_t initiative;
+    };
+
 public:
     turn_system(ecs::sparse_set<perception>& perception_set, dice_roller& roller);
 
     void roll_initiative(std::vector<ecs::entity>& entities);
-    void next_turn();
+    ecs::entity next_turn();
+
+    const std::vector<initiative_data>& get_initiative_order() const noexcept;
     const phase_data& get_current_phase() const;
 
 private:
-
     static constexpr size_t m_default_rounds = 10;
-
-    struct initiative_data {
-        ecs::entity entity;
-        int64_t initiative;
-    };
 
     ecs::sparse_set<perception>& m_perception_set;
     dice_roller& m_roller;
