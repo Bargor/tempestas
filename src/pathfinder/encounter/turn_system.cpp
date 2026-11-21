@@ -68,6 +68,11 @@ ecs::entity turn_system::next_turn() {
     }
     hard_assert(m_current_index < m_phases.size(), "Current index is out of bounds");
 
+    if (m_phases[m_current_index].phase == round_phase::round_start) {
+        m_round++;
+        m_current_index = 0;
+    }
+
     return m_phases[m_current_index].entity;
 }
 
