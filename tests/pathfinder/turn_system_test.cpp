@@ -16,11 +16,14 @@ TEST(turn_system, roll_initiative) {
     dice_roller roller(42);
     turn_system system(perception_set, roller);
     std::vector<ecs::entity> entities;
-    for (int i = 0; i < 10; ++i) {
-        auto entity = ecs::entity(i);
+    for (uint32_t i = 0; i < 10; ++i) {
+        auto entity = ecs::entity{.id = i, .generation = 0};
         entities.push_back(entity);
-        perception_set.emplace(
-            entity, perception{.perception = i, .rank = proficency_rank::untrained, .wisdom = 10, .item_bonus = 0});
+        perception_set.emplace(entity,
+                               perception{.perception = static_cast<int32_t>(i),
+                                          .rank = proficency_rank::untrained,
+                                          .wisdom = 10,
+                                          .item_bonus = 0});
     }
     system.roll_initiative(entities);
     const auto& phase_data = system.get_current_phase();
@@ -37,11 +40,14 @@ TEST(turn_system, next_turn) {
     dice_roller roller(42);
     turn_system system(perception_set, roller);
     std::vector<ecs::entity> entities;
-    for (int i = 0; i < 10; ++i) {
-        auto entity = ecs::entity(i);
+    for (uint32_t i = 0; i < 10; ++i) {
+        auto entity = ecs::entity{.id = i, .generation = 0};
         entities.push_back(entity);
-        perception_set.emplace(
-            entity, perception{.perception = i, .rank = proficency_rank::untrained, .wisdom = 10, .item_bonus = 0});
+        perception_set.emplace(entity,
+                               perception{.perception = static_cast<int32_t>(i),
+                                          .rank = proficency_rank::untrained,
+                                          .wisdom = 10,
+                                          .item_bonus = 0});
     }
     system.roll_initiative(entities);
     const auto& order = system.get_initiative_order();
@@ -63,11 +69,14 @@ TEST(turn_system, next_turn_wrap_around) {
     dice_roller roller(42);
     turn_system system(perception_set, roller);
     std::vector<ecs::entity> entities;
-    for (int i = 0; i < 10; ++i) {
-        auto entity = ecs::entity(i);
+    for (uint32_t i = 0; i < 10; ++i) {
+        auto entity = ecs::entity{.id = i, .generation = 0};
         entities.push_back(entity);
-        perception_set.emplace(
-            entity, perception{.perception = i, .rank = proficency_rank::untrained, .wisdom = 10, .item_bonus = 0});
+        perception_set.emplace(entity,
+                               perception{.perception = static_cast<int32_t>(i),
+                                          .rank = proficency_rank::untrained,
+                                          .wisdom = 10,
+                                          .item_bonus = 0});
     }
     system.roll_initiative(entities);
     const auto& order = system.get_initiative_order();
