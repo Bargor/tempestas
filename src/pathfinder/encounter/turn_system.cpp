@@ -28,44 +28,50 @@ void turn_system::roll_initiative(std::vector<ecs::entity>& entities) {
     m_encounter_active = true;
 
     for (size_t i = 0; i < m_default_rounds; ++i) {
-        size_t current_entity_idx = 0;
-        for (int32_t j = 0; j < static_cast<int32_t>(round_phase::enum_size); ++j) {
-            auto& data = m_phases.emplace_back(phase_data{.phase = static_cast<round_phase>(j), .round = i + 1});
-            switch (data.phase) {
-                case round_phase::turn_start:
-                case round_phase::regain_resources:
-                case round_phase::main_turn:
-                case round_phase::turn_end: {
-                    data.entity = m_initiative_order[current_entity_idx].entity;
-                    break;
+        for (size_t j = 0; j < m_initiative_order.size(); ++j) {
+            for (int32_t k = 0; k < static_cast<int32_t>(round_phase::enum_size); ++k) {
+                auto& data = m_phases.emplace_back(phase_data{.phase = static_cast<round_phase>(k), .round = i + 1});
+                switch (data.phase) {
+                    case round_phase::turn_start:
+                    case round_phase::regain_resources:
+                    case round_phase::main_turn:
+                    case round_phase::turn_end: {
+                        data.entity = m_initiative_order[j].entity;
+                        break;
+                    }
                 }
             }
         }
     }
+
+    hard_assert(m_phases.size() == entities.size() * m_default_rounds * static_cast<size_t>(round_phase::enum_size),
+                "Phases size is not equal to entities size * default rounds * round phase enum size");
 }
 
 ecs::entity turn_system::next_turn() {
-    hard_assert(m_phases[m_current_index].phase == round_phase::main_turn, "Current phase is not a main turn");
     hard_assert(m_current_index < m_phases.size(), "Current index is out of bounds");
 
-    m_current_index++;
+    m_current_index = m_current_index == 0 ? 0 : m_current_index + 1;
 
-    for (; m_phases[m_current_index].phase != round_phase::main_turn && m_current_index < m_phases.size();
+    for (; m_current_index < m_phases.size() && m_phases[m_current_index].phase != round_phase::main_turn;
          ++m_current_index) {
         // Skip phases until the next main turn
         if (m_phases[m_current_index].phase == round_phase::regain_resources) {
             // TODO: Perhaps we need kind of a resource manager thing
         }
     }
+    hard_assert(m_current_index < m_phases.size(), "Current index is out of bounds");
 
     return m_phases[m_current_index].entity;
 }
 
 const std::vector<turn_system::initiative_data>& turn_system::get_initiative_order() const noexcept {
+    hard_assert(m_encounter_active, "Encounter is not active");
     return m_initiative_order;
 }
 
 const turn_system::phase_data& turn_system::get_current_phase() const {
+    hard_assert(m_encounter_active, "Encounter is not active");
     return m_phases[m_current_index];
 }
 

@@ -44,8 +44,54 @@ TEST(turn_system, next_turn) {
             entity, perception{.perception = i, .rank = proficency_rank::untrained, .wisdom = 10, .item_bonus = 0});
     }
     system.roll_initiative(entities);
-    for (size_t i = 0; i < 100; ++i) {
-        auto entity = system.next_turn();
-        EXPECT_NE(entity, ecs::invalid_entity);
+    const auto& order = system.get_initiative_order();
+
+    for (auto& item : order) {
+        fmt::printf("Entity: %d, Initiative: %d\n", item.entity.id, item.initiative);
     }
+
+    for (size_t i = 0; i < 10; ++i) {
+        const auto entity = system.next_turn();
+        fmt::printf("Entity: %d, Order: %d\n", entity.id, i);
+        EXPECT_NE(entity, ecs::invalid_entity);
+        EXPECT_EQ(entity, order[i].entity);
+    }
+}
+
+TEST(turn_system, next_turn_wrap_around) {
+    ecs::sparse_set<perception> perception_set;
+    dice_roller roller(42);
+    turn_system system(perception_set, roller);
+    std::vector<ecs::entity> entities;
+    for (int i = 0; i < 10; ++i) {
+        auto entity = ecs::entity(i);
+        entities.push_back(entity);
+        perception_set.emplace(
+            entity, perception{.perception = i, .rank = proficency_rank::untrained, .wisdom = 10, .item_bonus = 0});
+    }
+    system.roll_initiative(entities);
+    const auto& order = system.get_initiative_order();
+    for (size_t i = 0; i < 10; ++i) {
+        const auto entity = system.next_turn();
+        EXPECT_NE(entity, ecs::invalid_entity);
+        EXPECT_EQ(entity, order[i].entity);
+    }
+    // Next turn should wrap around to the first entity
+    const auto entity = system.next_turn();
+    EXPECT_NE(entity, ecs::invalid_entity);
+    EXPECT_EQ(entity, order[0].entity);
+}
+
+TEST(turn_system, get_initiative_order_without_roll) {
+    ecs::sparse_set<perception> perception_set;
+    dice_roller roller(42);
+    turn_system system(perception_set, roller);
+    EXPECT_DEATH(system.get_initiative_order(), "");
+}
+
+TEST(turn_system, get_current_phase_without_roll) {
+    ecs::sparse_set<perception> perception_set;
+    dice_roller roller(42);
+    turn_system system(perception_set, roller);
+    EXPECT_DEATH(system.get_current_phase(), "");
 }
