@@ -115,32 +115,32 @@ void glfw_window::set_state(window_display_state window_state) noexcept {
     assert(get_state() != window_state);
     window::set_state(window_state);
     switch (window_state) {
-    case window_display_state::opened:
-        glfwRestoreWindow(m_glfw_window);
-        break;
-    case window_display_state::iconified:
-        glfwIconifyWindow(m_glfw_window);
-        break;
-    case window_display_state::maximized:
-        glfwMaximizeWindow(m_glfw_window);
-        break;
-    default:
-        assert(false);
-        break;
+        case window_display_state::opened:
+            glfwRestoreWindow(m_glfw_window);
+            break;
+        case window_display_state::iconified:
+            glfwIconifyWindow(m_glfw_window);
+            break;
+        case window_display_state::maximized:
+            glfwMaximizeWindow(m_glfw_window);
+            break;
+        default:
+            assert(false);
+            break;
     }
     publish_event(event::iconify{window_state});
 }
 
 int glfw_window::to_glfw_cursor_mode(const cursor_mode mode) noexcept {
     switch (mode) {
-    case cursor_mode::normal:
-        return GLFW_CURSOR_NORMAL;
-    case cursor_mode::hidden:
-        return GLFW_CURSOR_HIDDEN;
-    case cursor_mode::disabled:
-        return GLFW_CURSOR_DISABLED;
-    default:
-        return GLFW_CURSOR_NORMAL;
+        case cursor_mode::normal:
+            return GLFW_CURSOR_NORMAL;
+        case cursor_mode::hidden:
+            return GLFW_CURSOR_HIDDEN;
+        case cursor_mode::disabled:
+            return GLFW_CURSOR_DISABLED;
+        default:
+            return GLFW_CURSOR_NORMAL;
     }
 }
 
