@@ -23,16 +23,16 @@ namespace {
 
     TST_INLINE std::string severity_to_string(vk::DebugUtilsMessageSeverityFlagBitsEXT severity) {
         switch (severity) {
-        case vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose:
-            return "VERBOSE";
-        case vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo:
-            return "INFO";
-        case vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning:
-            return "WARNING";
-        case vk::DebugUtilsMessageSeverityFlagBitsEXT::eError:
-            return "ERROR";
-        default:
-            return "UNKNOWN";
+            case vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose:
+                return "VERBOSE";
+            case vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo:
+                return "INFO";
+            case vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning:
+                return "WARNING";
+            case vk::DebugUtilsMessageSeverityFlagBitsEXT::eError:
+                return "ERROR";
+            default:
+                return "UNKNOWN";
         }
     }
 

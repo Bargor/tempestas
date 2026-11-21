@@ -1,7 +1,7 @@
 #pragma once
 
-#include <variant>
 #include <cstdint>
+#include <variant>
 
 namespace tst::pathfinder {
 struct game_event {
@@ -10,7 +10,7 @@ struct game_event {
         int32_t damage;
     };
 
-    using payload = std::variant <apply_damage>;
+    using payload = std::variant<apply_damage>;
 
     payload data{};
     // Assigned by event_processor when the event is queued. Zero means not queued.

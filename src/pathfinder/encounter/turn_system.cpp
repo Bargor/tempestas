@@ -30,13 +30,19 @@ void turn_system::roll_initiative(std::vector<ecs::entity>& entities) {
     for (size_t i = 0; i < m_default_rounds; ++i) {
         for (size_t j = 0; j < m_initiative_order.size(); ++j) {
             for (int32_t k = 0; k < static_cast<int32_t>(round_phase::enum_size); ++k) {
-                auto& data = m_phases.emplace_back(phase_data{.phase = static_cast<round_phase>(k), .round = i + 1});
+                auto& data = m_phases.emplace_back(phase_data{
+                    .entity = ecs::invalid_entity, .phase = static_cast<round_phase>(k), .round = i + 1, .events = {}});
                 switch (data.phase) {
                     case round_phase::turn_start:
                     case round_phase::regain_resources:
                     case round_phase::main_turn:
                     case round_phase::turn_end: {
                         data.entity = m_initiative_order[j].entity;
+                        break;
+                    }
+                    case round_phase::round_start:
+                    case round_phase::round_end:
+                    default: {
                         break;
                     }
                 }

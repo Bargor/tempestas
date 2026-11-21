@@ -1,7 +1,6 @@
 #pragma once
 
 #include <core/util/flags.h>
-
 #include <cstdint>
 #include <vector>
 
