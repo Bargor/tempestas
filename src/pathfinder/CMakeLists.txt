@@ -1,6 +1,7 @@
 set(PATHFINDER_SOURCES
     encounter/turn_system.cpp
     util/dice_roller.cpp
+    event_log.cpp
     session.cpp
 )
 
@@ -10,6 +11,7 @@ set(PATHFINDER_HEADERS
     components/player_data.h
     encounter/turn_system.h
     util/dice_roller.h
+    event_log.h
     game_event.h
     session.h
 )

@@ -1,4 +1,6 @@
-#include "game_state.h"
+#include "session.h"
+
+#include <ecs/registry.h>
 
 namespace tst::pathfinder {
 
