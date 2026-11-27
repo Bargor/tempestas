@@ -1,6 +1,5 @@
 #pragma once
 
-#include "encounter/encounter.h"
 #include "session.h"
 #include "util/dice_roller.h"
 
@@ -28,7 +27,6 @@ private:
 private:
     ecs::registry& m_registry;
     dice_roller m_roller;
-    encounter_system m_encounter_system;
 };
 
 } // namespace tst::pathfinder

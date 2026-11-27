@@ -1,4 +1,5 @@
 #include "pathfinder/encounter/turn_system.h"
+#include "pathfinder/util/dice_roller.h"
 
 #include <gtest/gtest.h>
 

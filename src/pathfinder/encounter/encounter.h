@@ -1,22 +1,21 @@
 #pragma once
 
-#include "ecs/registry.h"
 #include "encounter/turn_system.h"
-#include "session.h"
-
-#include <vector>
+#include "game_state.h"
 
 namespace tst::pathfinder {
 
+class dice_roller;
+
 class encounter_system {
 public:
-    encounter_system(ecs::registry& registry, dice_roller& roller);
+    encounter_system(game_state& state, dice_roller& roller, ecs::sparse_set<perception>& perception_set);
 
     void start_encounter(std::vector<ecs::entity>& entities);
     void finish_encounter();
 
 private:
-    ecs::registry& m_registry;
+    game_state& m_state;
     dice_roller& m_roller;
 
     turn_system m_turn_system;

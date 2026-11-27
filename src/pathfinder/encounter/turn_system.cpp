@@ -1,4 +1,5 @@
 #include "turn_system.h"
+#include "util/dice_roller.h"
 
 #include <assert.h>
 

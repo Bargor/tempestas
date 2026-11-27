@@ -4,8 +4,8 @@
 
 namespace tst::pathfinder {
 
-encounter_system::encounter_system(ecs::registry& registry, dice_roller& roller)
-    : m_registry(registry), m_roller(roller), m_turn_system(registry.get_storage<perception>(), m_roller) {
+encounter_system::encounter_system(game_state& state, dice_roller& roller, ecs::sparse_set<perception>& perception_set)
+    : m_state(state), m_roller(roller), m_turn_system(perception_set, m_roller) {
 }
 
 void encounter_system::start_encounter(std::vector<ecs::entity>& entities) {

@@ -2,7 +2,6 @@
 
 #include "components/common.h"
 #include "game_event.h"
-#include "util/dice_roller.h"
 
 #include <ecs/entity.h>
 #include <ecs/sparse_set.h>
@@ -12,6 +11,8 @@
 #include "game_event.h"
 
 namespace tst::pathfinder {
+
+class dice_roller;
 
 enum class round_phase {
     round_start,
