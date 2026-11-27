@@ -1,6 +1,7 @@
 #include "application.h"
 
 #include <device/monitor.h>
+#include <random>
 #include <utility>
 
 namespace tst::application {
@@ -30,7 +31,9 @@ application::application(program_params params, const device::monitor& monitor) 
                     monitor,
                     m_program_params.fullscreen_mode,
                     m_events_processor)
-    , m_input_processor(m_main_window, m_events_processor) {
+    , m_input_processor(m_main_window, m_events_processor)
+    , m_registry()
+    , m_pathfinder(m_registry, std::random_device{}()) {
 }
 
 void application::run() noexcept {

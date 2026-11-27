@@ -2,13 +2,17 @@
 
 #include "components/common.h"
 #include "game_event.h"
-#include "util/dice_roller.h"
 
 #include <ecs/entity.h>
 #include <ecs/sparse_set.h>
+
 #include <vector>
 
+#include "game_event.h"
+
 namespace tst::pathfinder {
+
+class dice_roller;
 
 enum class round_phase {
     round_start,
@@ -48,6 +52,8 @@ public:
 
     const std::vector<initiative_data>& get_initiative_order() const noexcept;
     const phase_data& get_current_phase() const;
+
+    void finish_encounter() noexcept;
 
 private:
     static constexpr size_t m_default_rounds = 10;
